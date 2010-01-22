@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/icons" >
+        <file alias="gplv3logo" >icons/gplv3.png</file>
+        <file alias="qtlogo" >icons/qtlogo.png</file>
+        <file alias="internet" >icons/32x32/internet.png</file>
+        <file alias="open" >icons/32x32/document-open.png</file>
+        <file alias="save" >icons/32x32/document-save.png</file>
+        <file alias="saveas" >icons/32x32/document-save-as.png</file>
+        <file alias="refresh" >icons/32x32/refresh.png</file>
+        <file alias="refresh-inactive" >icons/32x32/refresh-inactive.png</file>
+        <file alias="experiment" >icons/16x16/experiment.png</file>
+        <file alias="running" >icons/32x32/running.gif</file>
+        <file alias="idle" >icons/32x32/idle.png</file>
+        <file alias="logo" >icons/32x32/qtlogo.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,88 @@
+﻿Protocol description
+
+Server listens UDP port 25050
+
+Request - list of probable answers:
+1. "gpib scan" - "200 You found me"
+this request is used to find all the possible servers in lan. broadcasted "gpib scan" will make servers reveal themselves
+
+2. "set interval=12345"	-	"200 Timer interval set to 12345"
+						-	"400 Bad request" (if not integer value is supplied)  //NOT IMPLEMENTED
+						-	"403 Remote control of interval is forbidden"
+12345 - is the measuring interval in miliseconds.
+
+2.1 "get interval"		-	"200 Interval:\r\n12345"
+						-	"403 Forbidden"
+12345 - is the measuring interval in miliseconds.
+							
+
+3. "get latest"	-	"200 Latest data:\r\n14:02:07 +1.33549824E-01 289.596924 289.761597 290.151550 1254999727.812"
+				-	"403 Forbidden"
+				-	"404 No data"
+this request is used to get the latest measured values (for monitoring)
+
+
+/* NOT YET IMPLEMENTED				
+4. "get current" -	"200 Current data:\r\n14:02:07 +1.33549824E-01 289.596924 289.761597 290.151550 1254999727.812"
+					"403 Forbidden"
+this request is used to initiate the measuring procedure and report current values (for more interactive monitoring).
+Note that values measured by this request will NOT BE SAVED in main data file. Use this only for low-delay monitoring.
+Use this with caution, since measuring procedure is time-consuming and will cause server-side delays while measuring.
+Consider using "monitor" request
+*/
+
+5. "get all" -	"200 Initial data:\r\n14:02:07 +1.33549824E-01 1254999727.812\r\n14:02:08 +1.33549869E-01 1254999728.812"
+				"403 Forbidden"
+				"404 No data"
+this request is used at the start of the client-server interaction. Server will report measured data from the beginning of the data file (not exceeding the length limit for one UDP packet).
+client should ask for more data with "get from ..." requests.
+
+6. "get from xxxxxxxxxx.xxx" -	"200 Data from xxxxxxxxxx.xxx:\r\n14:02:07 +1.33549824E-01 1254999727.812\r\n14:02:08 +1.33549869E-01 1254999728.812"
+							 -	"204 No new data available. Either request timestamp is in the future or the latest measure point has the requested timestamp"
+							 -	"400 Bad request" (either supplied value is incorrect or 
+							 - 	"403 Forbidden"
+							 -	"404 No data"
+							 
+7. "monitor on"/"monitor off" -	"200 Monitor mode switched on"/"200 Monitor mode switched off"
+							  -	"403 Forbidden"
+It this mode gpib server will send udp packets to client triggered this mode on each measurement, so the latest measured values will come to the client as soon as possible.
+Useful for real-time monitoring.
+
+8. "get devicename xx" -	"200 Device name:\r\nxx xxxxxxxxxxx" (xx - is integer starting from 0, xxxxxxxxxx - name of the device)
+							"400 Bad request" (either supplied value is not integer or no device with such index)
+							"403 Forbidden"
+							
+9. "get valuename xx" -		"200 Value name:\r\nxx xxxxxxxxxx" (xx - is integer starting from 0, xxxxxxxxxx - name of the value. Ex.: Capillar temperature)
+							"400 Bad request" (either supplied value is not integer or no value with such index)
+							"403 Forbidden"
+
+/*							
+10. "get unitname xx" -		"200 Unit name:\r\nxx xxxxxxxxxxxx" (xx - is integer starting from 0, xxxxxxxxxx - unit name. Ex.: K, MHz)
+							"400 Bad request" (either supplied value is not integer or no value with such index)
+							"403 Forbidden"
+*/						
+				
+11. "start"	-	"200 Running"
+				"403 Forbidden"
+
+12.	"stop"	-	"200 Idle"
+				"403 Forbidden"
+				
+13. "status" -	"200 Idle"
+				"200 Running"
+
+14. "ping"	-	"200 pong"
+
+15. "get workplan"	-	"200 Workplan:\r\n0.0\r\n5.0\r\n10.0"
+
+16. "set workplan=0.0 5.0 10.0"	-	"200 Workplan:\r\n0.0\r\n5.0\r\n10.0"
+						"403 Forbidden"
+
+17. "get workplan index"	-	"200 Workplan index:\r\n2"
+					"403 Forbidden"
+
+Note: Reply to this request is the _zero_-based index of current
+
+18. "set workplan index=2"	-	"200 Workplan index:\r\n2"
+					"403 Forbidden"
+Note: workplan index is _zero_-based
