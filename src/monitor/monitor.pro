@@ -9,12 +9,12 @@ SOURCES += main.cpp \
     about.cpp \
     networkDialog.cpp \
     errormessagedialog.cpp \
-    ../plot/gpibsocket.cpp
+    ../gpibsocket/gpibsocket.cpp
 HEADERS += mainwindow.h \
     about.h \
     networkDialog.h \
     errormessagedialog.h \
-    ../plot/gpibsocket.h
+    ../gpibsocket/gpibsocket.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \

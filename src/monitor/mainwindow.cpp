@@ -12,6 +12,7 @@
 #include <QList>
 #include <QAction>
 #include <QTimer>
+#include "../gpibsocket/gpibsocket.h"
 
 
 

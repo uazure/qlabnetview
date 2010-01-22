@@ -102,9 +102,7 @@ void networkDialog::serverFound(QHostAddress server) {
 }
 
 void networkDialog::setServerInterval(int msec)  {
-    ui->interval->setNum(double(msec)/1000);
-    ui->interval->setToolTip(QString::number(msec));
-    //QString::number(msec)
+    ui->intervalLabel->setText(tr("Interval ")+QString::number(double (msec)/1000)+tr(" sec"));
 }
 
 void networkDialog::setServerStatus(bool running) {

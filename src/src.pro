@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    plot
-SUBDIRS += monitor
+    qlabnetview \
+    monitor

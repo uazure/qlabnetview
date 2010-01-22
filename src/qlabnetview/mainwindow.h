@@ -25,8 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QVector>
 #include <QUdpSocket>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+#include <qwt_symbol.h>
+#include <QRegExp>
+#include "plot.h"
+#include "../gpibsocket/gpibsocket.h"
+#include "gpibdata.h"
 
-class gpibSocket;
 class QTimer;
 class experimentControl;
 
@@ -43,22 +49,27 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     enum dataSourceMode {modeNoop=0, modeNetwork=1, modeFile=2};
+    enum plotType {measurePlot=0,transitionPlot=1};
+    enum serviceInfo {serviceHeater,serviceHeLevel};
     bool burstUpdate;
 
-    QRegExp columnDelimiter;
-    QStringList rawAsciiData;
-    QStringList measureData;
-    QStringList transitionData;
-    QString latestTimestamp;
-    int measureDatacolumns;
+
+    gpibData *pdata;
+
     QString currentFileName;
+    Plot *plot;
     static QString getFileName(void);
     QString delimiter;
+    QRegExp delimiterRegExp;
     qint32 timediff(QTime from, QTime to);
+    QTime initialTime;
     double initialTimestamp;
+    qint32 daydiff;
     QSettings settings;
-
+    void drawData(int x_index, int y_index, bool rightAxis=false,QString label="",int plotType=measurePlot);
+    void fileToData();
     void datagramToData(QStringList data);
+    void asciiToData(QStringList *data,bool overwrite=false);
     gpibSocket *gpib;
     QHostAddress gpibServer; //address of server to work with
 
@@ -69,34 +80,53 @@ public:
 
 
 
-    public slots:
-void showErrorMessageDialog(QString message);
-void updateRtt(int msec);
-void updateRxBytes (quint32 rxBytes);
-void updateTxBytes (quint32 txBytes);
-void updateCurrentData(QString data);
-void gpibNoNewData();
-void updateInterval (int);
+public slots:
+    void showErrorMessageDialog(QString message);
+    void updateRtt(int msec);
+    void updateRxBytes (quint32 rxBytes);
+    void updateTxBytes (quint32 txBytes);
+    void updateInitialData(QStringList head);
+    void updateCurrentData(QStringList data,QString from);
+    void gpibNoNewData();
+    void setDataSourceMode (int);
+    void updateInterval (int);
+    void updateHeaterPower();
 
 private:
     Ui::MainWindow *ui;
     int dataSource;
+    bool assignCurves(QStringList head);
     QTimer *gpibQueryInterval;
     experimentControl *experimentControlDialog;
 
 
 private slots:
-//    void close();
+    //    void close();
 
+    void setColumn(int column,int axis,QString axisLabel,QString dataLabel);
+    void setColumn(int column,int serviceInfo,double low_limit,double high_limit);
+    void showFileChooseColumnsDialog();
     void showAbout();
     void showAboutQt();
+    void showExperimentControl(void);
+    void showViewRawData(void);
+    void showViewParsedData(void);
+    void showViewTableData(void);
+    void fileOpen(QString filename);
+    void fileOpen();
+    void fileSave();
+    void fileSaveAs();
     void showBrowseNetworkDialog(void);
+    void startStopNetworkExchange(bool start);
+    void resetPlot();
     void gpibFetchData();
+    void setNumPoints(int num);
+    void setNumTransitionPoints(int num);
+    void zoomAll();
+    void zoom(bool on);
 
 
-
-
-    signals:
+signals:
 
 };
 
