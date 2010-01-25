@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     qlabnetview \
-    monitor
+    monitor \
+    qlabnetfake
