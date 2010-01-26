@@ -7,4 +7,4 @@ SUBDIRS = \
 
 
 #Remark this to disable monitor module
-#CONFIG+=monitor
+CONFIG+=monitor
