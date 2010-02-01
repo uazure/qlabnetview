@@ -28,6 +28,7 @@ public:
     ~server();
     void processTheDatagram(QByteArray,QHostAddress sender,quint16 senderPort);
     void setInFile(QString filename);
+    QByteArray prepareData(int index=0);
     QStringList data;
 
 
@@ -35,6 +36,9 @@ public slots:
     void readPendingDatagrams(void);
 private:
     QString inFile;
+    QRegExp delimiterRegExp;
+signals:
+    void wantAbort();
 };
 
 #endif // SERVER_H

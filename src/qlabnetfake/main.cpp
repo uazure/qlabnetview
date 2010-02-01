@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
 
 
 server s;
-QStringList arglist=a.arguments();
+a.connect(&s,SIGNAL(wantAbort()),&a,SLOT(quit()));
+          QStringList arglist=a.arguments();
 if (a.argc()>1) {
     qDebug("There is command-line arguments, good...");
     QString infile=arglist.at(1);
