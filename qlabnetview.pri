@@ -11,7 +11,7 @@ VERSION      = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 # qmake internal options
 ######################################################################
 
-CONFIG           += qt     # Also for Qtopia Core!
+CONFIG           += qt
 CONFIG           += warn_on
 CONFIG           += thread
 

@@ -54,14 +54,17 @@ QByteArray server::prepareData(int index) {
     }
     int i=index;
     QByteArray answer;
+
     while (answer.size()<UDP_SIZE && i<data.size()) {
         answer.append(this->data.at(i).trimmed()).append("\r\n");
+        qDebug()<<"appended "<<this->data.at(i).trimmed();
         i++;
         }
 
     if (answer.size()>=UDP_SIZE) {
-        answer.truncate(answer.size()-data.at(i).trimmed().size()-2);
-    }
+        answer.truncate(answer.size()-data.at(i-1).trimmed().size()-2);
+        }
+
     return answer;
 
 }

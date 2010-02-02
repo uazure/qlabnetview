@@ -1,4 +1,4 @@
-Makefile
+Makefile*
 *.[oa]
 moc_*.cpp
 ui_*.h

@@ -10,3 +10,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     server.cpp
 HEADERS += server.h
+
+#DEFINES += QT_NO_DEBUG_OUTPUT
+
