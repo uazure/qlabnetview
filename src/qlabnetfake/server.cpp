@@ -93,6 +93,7 @@ void server::processTheDatagram(QByteArray array, QHostAddress sender,quint16 po
      int i=data.size()-1;
      for (;i>=0;i--) {
          t=data.at(i);
+         //FIXME: this is probably a cpu-consuming opertation. Should be rewriten to be faster
          tlist=t.split(this->delimiterRegExp);
          if (tlist.last().trimmed()==start) {
              i++;

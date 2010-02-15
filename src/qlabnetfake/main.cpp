@@ -18,18 +18,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QCoreApplication>
 
 #include "server.h"
+#include "iostream"
 #include "QFile"
 #include "QString"
 #include "QStringList"
 
+void showHelp(void);
+void showVersion(void);
+
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    a.setApplicationName("qlabnetfake");
+    a.setApplicationVersion("0.0.1-pre-alpha");
 
 
 server s;
-a.connect(&s,SIGNAL(wantAbort()),&a,SLOT(quit()));
-          QStringList arglist=a.arguments();
+//a.connect(&s,SIGNAL(wantAbort()),&a,SLOT(quit()));
+QStringList arglist=a.arguments();
+
+for (int i=0;i<arglist.size();i++) {
+    if (arglist.at(i)=="--version") {
+        showVersion();
+        return 0;
+    }
+    if (arglist.at(i)=="--help") {
+        showHelp();
+        return 0;
+
+    }
+
+}
+
+
 if (a.argc()>1) {
     qDebug("There is command-line arguments, good...");
     QString infile=arglist.at(1);
@@ -61,4 +83,17 @@ if (a.argc()>1) {
 }
 
     return a.exec();
+}
+
+
+void showHelp(void) {
+    std::cout<<"Usage:\n\t"<<QCoreApplication::applicationName().toAscii().data()<<" [datafile.dat]\n";
+    std::cout<<"Where datafile.dat is the ASCII file with constant data row columns count.\n";
+    std::cout<<"If no datafile.dat is specified, the sample.dat is used by default.\n";
+}
+
+void showVersion(void) {
+    std::cout<<QCoreApplication::applicationName().toAscii().data();
+    std::cout<<" ver. "<<QCoreApplication::applicationVersion().toAscii().data();
+    std::cout<<"\n";
 }
