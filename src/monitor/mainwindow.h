@@ -42,8 +42,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    enum dataSourceMode {modeNoop=0, modeNetwork=1, modeFile=2};
-    bool burstUpdate;
+    enum dataSourceMode {modePoll=0, modeMonitor=1};
+    int mode;
+
 
     QRegExp columnDelimiter;
     QStringList rawAsciiData;
@@ -51,6 +52,7 @@ public:
     QStringList transitionData;
     QString latestTimestamp;
     int measureDatacolumns;
+    static QString double2HumanReadableString(double d);
     QString currentFileName;
     static QString getFileName(void);
     QString delimiter;
@@ -61,6 +63,7 @@ public:
     void datagramToData(QStringList data);
     gpibSocket *gpib;
     QHostAddress gpibServer; //address of server to work with
+
 
 
 
@@ -77,6 +80,8 @@ void updateTxBytes (quint32 txBytes);
 void updateCurrentData(QString data);
 void gpibNoNewData();
 void updateInterval (int);
+void switchMode(bool b=false);
+
 
 private:
     Ui::MainWindow *ui;

@@ -21,16 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QByteArray>
 #include "gpibsocket.h"
-#include "mainwindow.h"
+//#include "mainwindow.h"
 
 #define GPIB_UDP_PORT 25050
 
 
 
-gpibSocket::gpibSocket(MainWindow *parent)
+gpibSocket::gpibSocket(void)
 {
     //init the QUdpSocket
-    w=parent;
     rxBytes=0;
     txBytes=0;
     running=false;
@@ -38,17 +37,13 @@ gpibSocket::gpibSocket(MainWindow *parent)
     //bind to port 25051
     quint16 port=GPIB_UDP_PORT+1;
     while (!this->bind(port) and port<65535) {
-        parent->showErrorMessageDialog(tr("Failed to bind to port ")+QString::number(port));
+        qWarning() << "Failed to bind udp port"<< port;
         port++;}
 
 
 
     //call rx() when readyRead signal emitted (when udp packet arrives)
     connect(this,SIGNAL(readyRead()),this,SLOT(rx()));
-
-    connect(this,SIGNAL(serverRxBytes(quint32)),parent,SLOT(updateRxBytes(quint32)));
-    connect(this,SIGNAL(serverTxBytes(quint32)),parent,SLOT(updateTxBytes(quint32)));
-
 
 }
 gpibSocket::~gpibSocket() {
@@ -130,6 +125,15 @@ void gpibSocket::serverSetWorkplan(QStringList workplan) {
     this->tx(string.trimmed().toAscii());
 }
 
+void gpibSocket::serverSetMonitorMode(bool mode) {
+    if (mode) {
+    this->tx("monitor on");
+} else {
+    this->tx("monitor off");
+}
+
+}
+
 void gpibSocket::serverSetWorkplanIndex(int index) {
     this->tx("set workplan index="+QByteArray::number(index));
 }
@@ -154,7 +158,8 @@ void gpibSocket::rx() {
 
         if (datagram.startsWith("200 pong")) {
             int msec=this->startPingTime.msecsTo(QTime::currentTime());
-            w->updateRtt(msec);
+	    emit this->serverRtt (msec);
+//            w->updateRtt(msec);
             continue;
 
         } else
@@ -249,12 +254,15 @@ void gpibSocket::rx() {
                     idata.removeAt(i);
                 }
             }
-
             emit this->serverWorkplan(idata);
             continue;
         }
 
-
+        int i=datagram.indexOf("\n");
+        int j=datagram.size();
+        if (i==j-2 && datagram.contains(":")) { //if it is just one string
+        emit this->serverLatestData(datagram);
+        }
 
 
     }

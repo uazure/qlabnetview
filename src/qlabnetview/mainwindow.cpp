@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     gpibQueryInterval = new QTimer(this);
     gpibQueryInterval->setSingleShot(false);
 
-    gpib = new gpibSocket(this);
+    gpib = new gpibSocket();
     //define slot<->signal
     //call fileOpen dialog when File->Open clicked
     connect(ui->actionOpen,SIGNAL(triggered()),SLOT(fileOpen()));

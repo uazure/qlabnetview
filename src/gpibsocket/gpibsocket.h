@@ -20,14 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QUdpSocket>
 #include <QDateTime>
-class MainWindow;
 
 
 class gpibSocket:public QUdpSocket
 {
     Q_OBJECT
 public:
-    gpibSocket(MainWindow *parent);
+    gpibSocket(void);
 
     ~gpibSocket();
     QHostAddress getServerAddress(void);
@@ -37,7 +36,6 @@ public:
 
 private:
     QHostAddress serverAddress;
-    MainWindow *w;
     int interval;       //current query interval
     QTime startPingTime;    //time mark to identify the round trip time (rtt)
     QByteArray lastQuery;
@@ -60,6 +58,7 @@ public slots:
     void serverSetWorkplan(QStringList workplan);
     void serverGetWorkplanIndex(); //get the workplan index
     void serverSetWorkplanIndex(int i);
+    void serverSetMonitorMode(bool mode); //monitor on/off
     void rx(void); //this function recieves incoming data, updating the rxBytes counter
     void tx(QByteArray data,QHostAddress *address=0); //this function transmits data, updating the txBytes counter
 

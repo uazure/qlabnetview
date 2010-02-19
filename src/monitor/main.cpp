@@ -24,12 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setApplicationName("qlnmonitor");
+    a.setApplicationName("qlabnetmonitor");
     a.setApplicationVersion("0.0.1 pre-alpha");
+    a.setOrganizationName("qlabnetview");
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings(a.applicationName(),"default");
+    QSettings settings();
     MainWindow w;
-
     w.setWindowTitle(a.applicationName()+" "+a.applicationVersion());
     w.show();
     return a.exec();

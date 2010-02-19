@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>589</width>
-    <height>443</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../icons.qrc">
+   <iconset>
     <normaloff>:/icons/qtlogo</normaloff>:/icons/qtlogo</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0">
+    <item row="4" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="rxLabel">
@@ -60,56 +60,141 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="metersLayout">
       <item>
-       <widget class="QLabel" name="meterLabel1">
-        <property name="font">
-         <font>
-          <pointsize>42</pointsize>
-         </font>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="topMargin">
+         <number>5</number>
         </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
+        <item>
+         <widget class="QComboBox" name="comboBox1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="meterLabel1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>42</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="meterLabel2">
-        <property name="font">
-         <font>
-          <pointsize>42</pointsize>
-         </font>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="topMargin">
+         <number>5</number>
         </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
+        <item>
+         <widget class="QComboBox" name="comboBox2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="meterLabel2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>42</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="meterLabel3">
-        <property name="font">
-         <font>
-          <pointsize>42</pointsize>
-         </font>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="topMargin">
+         <number>5</number>
         </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
+        <item>
+         <widget class="QComboBox" name="comboBox3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="meterLabel3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>42</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="meterLabel4">
-        <property name="font">
-         <font>
-          <pointsize>42</pointsize>
-         </font>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="topMargin">
+         <number>5</number>
         </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
+        <item>
+         <widget class="QComboBox" name="comboBox4"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="meterLabel4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>42</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
+    <item row="3" column="0">
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -122,6 +207,29 @@
       </property>
      </spacer>
     </item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="radioPoll">
+      <property name="toolTip">
+       <string>Poll server for every portion of data. It is more secure</string>
+      </property>
+      <property name="text">
+       <string>Poll mode</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="radioMonitor">
+      <property name="toolTip">
+       <string>In this mode server will send unicast packets with the latest data portion. This is faster</string>
+      </property>
+      <property name="text">
+       <string>Monitor mode</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -130,7 +238,7 @@
      <x>0</x>
      <y>0</y>
      <width>589</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -166,7 +274,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
    </property>
    <property name="text">
@@ -175,7 +283,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
    </property>
    <property name="text">
@@ -184,7 +292,7 @@
   </action>
   <action name="actionSave_as">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/saveas</normaloff>:/icons/saveas</iconset>
    </property>
    <property name="text">
@@ -198,7 +306,7 @@
   </action>
   <action name="actionBrowse_network">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/internet</normaloff>:/icons/internet</iconset>
    </property>
    <property name="text">
@@ -212,7 +320,7 @@
   </action>
   <action name="actionExperiment_control">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/experiment</normaloff>:/icons/experiment</iconset>
    </property>
    <property name="text">
@@ -221,8 +329,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="../../icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
