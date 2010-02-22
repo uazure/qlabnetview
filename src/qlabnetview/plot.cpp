@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "plot.h"
 #include <zoomer.h>
 #include "qwt_plot_dict.h"
+#include "canvaspicker.h"
 #include <qwt_plot_layout.h>
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_grid.h>
@@ -30,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QColor>
 
 
+
 Plot::~Plot() {
 
 }
@@ -37,6 +39,7 @@ Plot::~Plot() {
 Plot::Plot(QWidget *parent):
         QwtPlot(parent)
 {
+    (void) new CanvasPicker(this);
     setAutoReplot(false);
     QwtPlotDict *dict=new QwtPlotDict();
     dict->setAutoDelete(true);
@@ -62,7 +65,8 @@ Plot::Plot(QWidget *parent):
     picker = new QwtPlotPicker(
             QwtPlot::xBottom,
             QwtPlot::yLeft,
-            QwtPicker::PointSelection | QwtPicker::DragSelection,
+            //QwtPicker::PointSelection |
+            QwtPicker::DragSelection,
             QwtPlotPicker::CrossRubberBand,
             QwtPicker::ActiveOnly,
             this->canvas());

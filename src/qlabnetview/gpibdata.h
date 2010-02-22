@@ -41,7 +41,7 @@ public:
     int serviceInfoHeaterPowerColumn; //this int contains column in data source containing the heater power level values
     QString measureDataY1Label;
     QString measureDataY2Label;
-    int measureDataColumns;
+    int columnCount;
 
 
     QTime initialTime;

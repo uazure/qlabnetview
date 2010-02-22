@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->pdata=new gpibData();
     ui->setupUi(this);
+    ui->actionOpen_recent->setStatusTip(settings.value("recentFile","").toString());
     plot = new Plot(this);
     ui->gridLayout->addWidget(plot,0,0);
     this->setDataSourceMode(modeNoop);
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOpen,SIGNAL(triggered()),SLOT(fileOpen()));
     connect(ui->actionSave,SIGNAL(triggered()),SLOT(fileSave()));
     connect(ui->actionSave_as,SIGNAL(triggered()),SLOT(fileSaveAs()));
+    connect(ui->actionOpen_recent,SIGNAL(triggered()),SLOT(fileOpenRecent()));
     //call networkDialog when File->Browse network clicked
     connect(ui->actionBrowse_network,SIGNAL(triggered()),this,SLOT(showBrowseNetworkDialog()));
     //close program when File->Exit clicked
@@ -142,7 +144,7 @@ bool MainWindow::assignCurves(QStringList head) {
     connect(a,SIGNAL(setColumn(int,int,QString,QString)),this,SLOT(setColumn(int,int,QString,QString)));
 
     if (a->exec()==QDialog::Accepted) {
-        pdata->measureDataColumns=a->columns();
+        pdata->columnCount=a->columns();
         return true;
     }
 return false;
@@ -305,16 +307,19 @@ void MainWindow::fileToData() {
 
 
 void MainWindow::fileOpen(QString filename) {
-
+    if (filename.isEmpty()) {
+        fileOpen();
+        return;
+    }
     this->currentFileName=filename;
     this->showFileChooseColumnsDialog();
     this->fileToData();
-    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->measureDataColumns) {
-        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->measureDataColumns  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
+    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
+        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
             drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
             drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
         }
-        if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->measureDataColumns  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
+        if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
             drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label);
             drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label+" (transition)",true);
         }
@@ -325,8 +330,11 @@ void MainWindow::fileOpen(QString filename) {
 void MainWindow::fileOpen() {
     this->setDataSourceMode(this->modeFile);
     this->resetPlot();
-    this->currentFileName=QFileDialog::getOpenFileName(this,
+    QFileDialog *dialog=new QFileDialog();
+    dialog->selectFile(this->settings.value("recentFile","").toString());
+    this->currentFileName=dialog->getOpenFileName(this,
         tr("Open data file"), this->settings.value("recentDir",QDir::rootPath()).toString(),tr("Data files (*.dat *.txt)"));
+    delete dialog;
     if (this->currentFileName.isEmpty()) {
         return;
     }
@@ -336,6 +344,12 @@ void MainWindow::fileOpen() {
     this->settings.setValue("recentDir",dirname);
     this->fileOpen(this->currentFileName);
 
+}
+
+void MainWindow::fileOpenRecent() {
+    this->setDataSourceMode(this->modeFile);
+    this->resetPlot();
+    fileOpen(settings.value("recentFile","").toString());
 }
 
 void MainWindow::fileSave() {
@@ -471,13 +485,13 @@ void MainWindow::updateCurrentData(QStringList data,QString from) {
         this->datagramToData(data);
         plot->clear();
 
-        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->measureDataColumns) {
+        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
             //if (!this->burstUpdate) {
-                if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->measureDataColumns  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
+                if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
                     drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
                     drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
                 }
-                if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->measureDataColumns  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
+                if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
                     drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label,measurePlot);
                     drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,QString::QString(),transitionPlot);
                 }
@@ -539,7 +553,7 @@ void MainWindow::resetPlot(void) {
     pdata->measureDataY2column=-1;
     pdata->measureDataY1Label="";
     pdata->measureDataY2Label="";
-    pdata->measureDataColumns=0;
+    pdata->columnCount=0;
 
 
 }

@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     viewparseddata.cpp \
     gpibdata.cpp \
     gpibtablemodel.cpp \
-    viewtabledata.cpp
+    viewtabledata.cpp \
+    canvaspicker.cpp
 HEADERS += mainwindow.h \
     about.h \
     assignCurvesDialog.h \
@@ -35,7 +36,8 @@ HEADERS += mainwindow.h \
     gpibdata.h \
     gpibtablemodel.h \
     viewtabledata.h \
-    main.h
+    main.h \
+    canvaspicker.h
 FORMS += mainwindow.ui \
     about.ui \
     assignCurvesDialog.ui \

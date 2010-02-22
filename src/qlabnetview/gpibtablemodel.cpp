@@ -29,8 +29,8 @@ QVariant gpibTableModel::data(const QModelIndex &index, int role) const {
         return QVariant();
     }
     QVariant val(QVariant::Invalid);
-    if (index.row()<ddata->size() || index.column()<ddata->at(0).size()) {
-        val=this->ddata->at(index.row()).at(index.column());
+    if (index.column()<ddata->size() || index.row()<ddata->at(0).size()) {
+        val=this->ddata->at(index.column()).at(index.row());
     }
     return val;
 }
@@ -40,14 +40,14 @@ void gpibTableModel::setArray(QList<QList <double> > *datastorage) {
 
 }
 
-int gpibTableModel::rowCount(const QModelIndex &parent) const {
+int gpibTableModel::columnCount(const QModelIndex &parent) const {
     int val=0;
     if (parent.isValid()) return 0;
     val=ddata->size();
     return val;
 }
 
-int gpibTableModel::columnCount(const QModelIndex &parent) const {
+int gpibTableModel::rowCount(const QModelIndex &parent) const {
     int val=0;
     if (parent.isValid()) return 0;
     val=ddata->at(0).size();

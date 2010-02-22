@@ -114,6 +114,7 @@ private slots:
     void showViewTableData(void);
     void fileOpen(QString filename);
     void fileOpen();
+    void fileOpenRecent(void);
     void fileSave();
     void fileSaveAs();
     void showBrowseNetworkDialog(void);

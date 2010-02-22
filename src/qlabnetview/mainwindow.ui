@@ -414,6 +414,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionOpen_recent"/>
     <addaction name="actionBrowse_network"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
@@ -535,6 +536,18 @@
   <action name="actionTable_data">
    <property name="text">
     <string>Table</string>
+   </property>
+  </action>
+  <action name="actionOpen_recent">
+   <property name="icon">
+    <iconset resource="../../icons.qrc">
+     <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
+   </property>
+   <property name="text">
+    <string>Open recent</string>
+   </property>
+   <property name="statusTip">
+    <string>Test</string>
    </property>
   </action>
  </widget>

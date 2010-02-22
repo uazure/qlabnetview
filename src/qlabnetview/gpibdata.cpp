@@ -15,8 +15,21 @@ GNU General Public License for more details.
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*gpibData - is the object containing a 2-dimension dynamic array of double.
+  This array is stored as QList<QList<double> >.
+  gpibData array = new gpibData();
+  array[0] - is the pointer to the first _column_ of data (time in h:mm:ss format)
+  array->size() - is the number of columns.
+  array[0]->size() - is the number of rows.
+  Since that, every single column data can be easily accessed. This is very useful
+  for realtime update of QwtPlot widget w/o deleting/adding new curves.
+  This is also needed for the gpibTableModel
+  */
+
+
 #include "gpibdata.h"
 #include <QTime>
+#include <QDebug>
 
 gpibData::gpibData()
 {
@@ -26,7 +39,7 @@ gpibData::gpibData()
     measureDataY2column=-1;
     serviceInfoHeaterPowerColumn=-1;
     serviceInfoHeLevelColumn=-1;
-    measureDataColumns=0;
+    columnCount=0;
 
     delimiterRegExp.setPattern("[\\ \\t]{1,9}"); //space (\\ ) or tab (\\t) {from 1 up to 9 in a row}
     this->daydiff=0;
@@ -60,12 +73,43 @@ double gpibData::timestampToSeconds(double time) {
 }
 
 void gpibData::appendStringToDdata(QString string) {
-    QList<double> dlist;
-    QStringList strlist=string.split("\t");
-    for (int i=0;i<strlist.size();i++) {
-        dlist.append(strlist.at(i).toDouble());
+    double tmpdouble;
+    bool tmpbool=false;
+
+    //here the every incoming data must be processed.
+    //We have just some QString in input. We should check if the column count
+    //in this string is equal to the column count of the very first data portion.
+    //incoming data MUST have single tab separators ("\t")
+    QStringList strlist=string.split("\t",QString::KeepEmptyParts);
+
+    //
+    if ((this->columnCount<=0 || ddata.size()==0 ) && strlist.size()>1 ) {
+      //this is a _first_ data portion. ddata must be prepared and filled as well
+        this->columnCount=strlist.size();
+        for (int i=0;i<strlist.size();i++) {
+            tmpdouble=strlist.at(i).toDouble(&tmpbool);
+            if (tmpbool) {
+                QList<double> tmpdoublelist;
+                tmpdoublelist.append(tmpdouble);
+                this->ddata.append(tmpdoublelist);
+            } else {
+                qCritical()<<"Critical: row 0, column"<<i<<"is NaN";
+                ddata.clear();
+                this->columnCount=0;
+                return;
+            }
+        }
+    } else if (strlist.size()==this->columnCount){
+        for (int i=0;i<this->columnCount;i++) {
+            this->ddata[i].append(strlist.at(i).toDouble(&tmpbool));
+            if (!tmpbool) {
+                qWarning()<<"Warning: row"<<ddata.at(0).size()-1<<", column"<<i
+                        << "is NaN";
+            }
+        }
+
     }
-    this->ddata.append(dlist);
+
 }
 
 void gpibData::appendAsciiData(QStringList string) {
