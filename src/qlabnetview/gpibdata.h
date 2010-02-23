@@ -34,6 +34,7 @@ public:
     QStringList transitionData;
     QString latestTimestamp;
     QList<QList<double> > ddata;
+    gpibDataLayout dataLayout;
     int measureDataXcolumn;
     int measureDataY1column;
     int measureDataY2column;
@@ -59,6 +60,28 @@ public slots:
     void appendAsciiData(QStringList string);
 
 
+
+};
+
+class gpibDataLayout:public QObject {
+    Q_OBJECT;
+
+public:
+    gpibDataLayout();
+    ~gpibDataLayout();
+    //getters
+    int getX() const;
+    QList<int> getY(bool Y2axis=false) const;
+    //setters
+    void setX(int columnIndex);
+    void appendY(int columnIndex,bool Y2axis=false);
+    void appendY(QList<int> columnIndex,bool Y2axis=false);
+    void clear(void);
+
+private:
+    int X; //index of the X data column in gpibData
+    QList<int> Y1; //List of indexes of the Y values (left axis)
+    QList<int> Y2; //Same for the right axis
 
 };
 

@@ -15,7 +15,9 @@ GNU General Public License for more details.
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*gpibData - is the object containing a 2-dimension dynamic array of double.
+/*!
+  \brief gpibData - is the object containing a 2-dimension dynamic array of double.
+
   This array is stored as QList<QList<double> >.
   gpibData array = new gpibData();
   array[0] - is the pointer to the first _column_ of data (time in h:mm:ss format)
@@ -178,3 +180,52 @@ void gpibData::appendAsciiData(QStringList string) {
     }
 
 }
+
+
+
+gpibDataLayout::gpibDataLayout() {
+    clear();
+
+}
+
+gpibDataLayout::~gpibDataLayout() {
+
+}
+
+void gpibDataLayout::clear() {
+    X=-1;
+    Y1.clear();
+    Y2.clear();
+}
+
+int gpibDataLayout::getX() const {
+    return X;
+}
+
+QList<int> gpibDataLayout::getY(bool Y2axis) const {
+    if (!Y2axis) return Y1;
+    else return Y2;
+}
+
+void gpibDataLayout::setX(int columnIndex) {
+    X=columnIndex;
+}
+
+void gpibDataLayout::appendY(int columnIndex, bool Y2axis) {
+    if (!Y2axis) {
+        Y1.append(columnIndex);
+    } else {
+        Y2.append(columnIndex);
+    }
+}
+
+void gpibDataLayout::appendY(QList<int>columnIndex, bool Y2axis) {
+    if (!Y2axis) {
+        Y1.append(columnIndex);
+    } else {
+        Y2.append(columnIndex);
+    }
+}
+
+
+

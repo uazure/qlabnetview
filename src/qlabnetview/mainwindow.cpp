@@ -9,7 +9,7 @@
 #include "viewrawdata.h"
 #include "viewparseddata.h"
 #include "viewtabledata.h"
-
+#include "setcurvesdialog.h"
 #include "errormessagedialog.h"
 #include "experimentControl.h"
 #include "gpibtablemodel.h"
@@ -138,6 +138,10 @@ void MainWindow::showFileChooseColumnsDialog() {
     }
 
 bool MainWindow::assignCurves(QStringList head) {
+    setCurvesDialog *setCurves=new setCurvesDialog(head);
+    setCurves->exec();
+    delete setCurves;
+
 
     assignCurvesDialog *a = new assignCurvesDialog(head,this->dataSource);
     connect(a,SIGNAL(setColumn(int,int,double,double)),this,SLOT(setColumn(int,int,double,double)));

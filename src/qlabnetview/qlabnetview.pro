@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     gpibdata.cpp \
     gpibtablemodel.cpp \
     viewtabledata.cpp \
-    canvaspicker.cpp
+    canvaspicker.cpp \
+    setcurvesdialog.cpp
 HEADERS += mainwindow.h \
     about.h \
     assignCurvesDialog.h \
@@ -37,7 +38,8 @@ HEADERS += mainwindow.h \
     gpibtablemodel.h \
     viewtabledata.h \
     main.h \
-    canvaspicker.h
+    canvaspicker.h \
+    setcurvesdialog.h
 FORMS += mainwindow.ui \
     about.ui \
     assignCurvesDialog.ui \
@@ -47,8 +49,8 @@ FORMS += mainwindow.ui \
     yesnodialog.ui \
     viewrawdata.ui \
     viewparseddata.ui \
-    viewtabledata.ui
-
+    viewtabledata.ui \
+    setcurvesdialog.ui
 unix { 
     LIBS += -lqwt
     INCLUDEPATH += /usr/include/qwt5/
@@ -61,16 +63,14 @@ win32 {
 }
 RESOURCES += ../../icons.qrc
 
+# installation related stuff
+INSTALLS += target
 
-#installation related stuff
-INSTALLS        += target
-#INSTALLS        += translations
-unix: INSTALLBASE = /usr/local
-win32: INSTALLBASE = C:/qlabnetview
-
-unix: target.path = $$INSTALLBASE/bin
-win32: target.path = $$INSTALLBASE
-
+# INSTALLS        += translations
+unix:INSTALLBASE = /usr/local
+win32:INSTALLBASE = C:/qlabnetview
+unix:target.path = $$INSTALLBASE/bin
+win32:target.path = $$INSTALLBASE
 
 # DEFINES = D_MYDEFINE
 OTHER_FILES += todo.txt

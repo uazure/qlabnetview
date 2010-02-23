@@ -1,7 +1,7 @@
 /**************************************************************************
 qlabnetview - is a Qt-based GUI application for experimental data representation and processing
-Copyright (C) 2009  Sergey Popov (aka azure)
-Last modification: 24 Nov 2009
+Copyright (C) 2010  Sergey Popov (aka azure)
+Last modification: 22 Feb 2010
 
 	This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,34 +15,43 @@ GNU General Public License for more details.
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "yesnodialog.h"
-#include "ui_yesnodialog.h"
+#ifndef SETCURVESDIALOG_H
+#define SETCURVESDIALOG_H
 
-yesNoDialog::yesNoDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::yesNoDialog)
-{
-    ui->setupUi(this);
+#include <QDialog>
 
+class QStringListModel;
+class QStringList;
+
+namespace Ui {
+    class setCurvesDialog;
 }
 
-yesNoDialog::~yesNoDialog()
-{
-    delete ui;
-}
+class setCurvesDialog : public QDialog {
+    Q_OBJECT
+public:
+    setCurvesDialog(QStringList head);
+    ~setCurvesDialog();
 
-void yesNoDialog::changeEvent(QEvent *e)
-{
-    QDialog::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
-}
+protected:
+    void changeEvent(QEvent *e);
 
-void yesNoDialog::setMessage(QString message) {
-    ui->label->setText(message);
-}
+private:
+    Ui::setCurvesDialog *ui;
+    QStringListModel *model;
+    QStringList columnList;
+    QStringListModel *Y1model;
+    QStringList Y1columnList;
+    QStringListModel *Y2model;
+    QStringList Y2columnList;
+
+private slots:
+    void appendY1Column(void);
+    void appendY2Column(void);
+    void appendYColumn(bool Y2);
+
+
+
+};
+
+#endif // SETCURVESDIALOG_H
