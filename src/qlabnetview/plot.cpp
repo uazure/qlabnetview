@@ -33,7 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 Plot::~Plot() {
-
+//delete panner;
+//delete magnifier;
 }
 
 Plot::Plot(QWidget *parent):
@@ -86,10 +87,6 @@ Plot::Plot(QWidget *parent):
     gridRight->setAxis(QwtPlot::xBottom,QwtPlot::yRight);
     gridRight->enableX(false);
 
-
-
-
-
 }
 
 
@@ -98,7 +95,6 @@ bool Plot::eventFilter(QObject *object, QEvent *e)
 {
 return true;
 }
-
 
 
 long Plot::insertCurve(double *x_data,double *y_data,long points_count,bool rightAxis,QString label) {
@@ -164,4 +160,5 @@ QwtPlotCurve *curve = new QwtPlotCurve();
 
 void Plot::clear() {
     QwtPlotDict::detachItems(QwtPlotItem::Rtti_PlotCurve,true);
+
     }

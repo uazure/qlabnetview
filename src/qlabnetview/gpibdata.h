@@ -17,72 +17,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef GPIBDATA_H
 #define GPIBDATA_H
+#include <QAbstractTableModel>
 #include <QStringList>
 #include <QString>
+#include <QTime>
 #include <QList>
 #include <QVector>
-#include <QTime>
 
-class gpibData:public QObject
+
+class gpibData:public QAbstractTableModel
 {
     Q_OBJECT;
 public:
     gpibData();
     ~gpibData();
+    //this section is for TableModel
+    QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const;
+    int rowCount(const QModelIndex &parent=QModelIndex()) const ;
+    int columnCount(const QModelIndex &parent=QModelIndex()) const ;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+
+    //this section is public getters
+    QStringList getRawData() const;
+    QString getLatestTimestamp() const;
+
+
+    int serviceInfoHeLevelColumn; //this int contains column in data source containing the He level values
+    int serviceInfoHeaterPowerColumn; //this int contains column in data source containing the heater power level values
+
+
+
+    QRegExp delimiterRegExp;
+
+protected:
+    QList<QList<double> > ddata;
+
+private:
     QStringList rawAsciiData;
     QStringList measureData;
     QStringList transitionData;
     QString latestTimestamp;
-    QList<QList<double> > ddata;
-    gpibDataLayout dataLayout;
-    int measureDataXcolumn;
-    int measureDataY1column;
-    int measureDataY2column;
-    int serviceInfoHeLevelColumn; //this int contains column in data source containing the He level values
-    int serviceInfoHeaterPowerColumn; //this int contains column in data source containing the heater power level values
-    QString measureDataY1Label;
-    QString measureDataY2Label;
-    int columnCount;
-
-
     QTime initialTime;
     double initialTimestamp;
     qint32 daydiff;
 
-    QRegExp delimiterRegExp;
-
-private:
     int timeToSeconds(QTime time);
     double timestampToSeconds(double time);
     void appendStringToDdata(QString string);
 
 public slots:
     void appendAsciiData(QStringList string);
-
-
-
-};
-
-class gpibDataLayout:public QObject {
-    Q_OBJECT;
-
-public:
-    gpibDataLayout();
-    ~gpibDataLayout();
-    //getters
-    int getX() const;
-    QList<int> getY(bool Y2axis=false) const;
-    //setters
-    void setX(int columnIndex);
-    void appendY(int columnIndex,bool Y2axis=false);
-    void appendY(QList<int> columnIndex,bool Y2axis=false);
-    void clear(void);
-
-private:
-    int X; //index of the X data column in gpibData
-    QList<int> Y1; //List of indexes of the Y values (left axis)
-    QList<int> Y2; //Same for the right axis
+    void reset(void);
 
 };
+
 
 #endif // GPIBDATA_H

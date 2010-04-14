@@ -69,7 +69,6 @@ public:
     void drawData(int x_index, int y_index, bool rightAxis=false,QString label="",int plotType=measurePlot);
     void fileToData();
     void datagramToData(QStringList data);
-    void asciiToData(QStringList *data,bool overwrite=false);
     gpibSocket *gpib;
     QHostAddress gpibServer; //address of server to work with
 

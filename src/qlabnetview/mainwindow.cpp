@@ -2,17 +2,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "about.h"
-#include "assignCurvesDialog.h"
 #include "networkDialog.h"
 #include "zoomer.h"
 #include "plot.h"
 #include "viewrawdata.h"
 #include "viewparseddata.h"
 #include "viewtabledata.h"
-#include "setcurvesdialog.h"
+#include "setupcurvesdialog.h"
 #include "errormessagedialog.h"
 #include "experimentControl.h"
-#include "gpibtablemodel.h"
 #include <QIcon>
 #include <QToolButton>
 #include <QFileDialog>
@@ -88,9 +86,6 @@ this->delimiterRegExp.setPattern("[\\ \\t]{1,9}"); //space (\\ ) or tab (\\t) {f
 this->daydiff=0;
 this->initialTimestamp=0;
 this->burstUpdate=false;
-pdata->measureDataXcolumn=-1;
-pdata->measureDataY1column=-1;
-pdata->measureDataY2column=-1;
 pdata->serviceInfoHeaterPowerColumn=-1;
 pdata->serviceInfoHeLevelColumn=-1;
 }
@@ -138,21 +133,21 @@ void MainWindow::showFileChooseColumnsDialog() {
     }
 
 bool MainWindow::assignCurves(QStringList head) {
-    setCurvesDialog *setCurves=new setCurvesDialog(head);
-    setCurves->exec();
-    delete setCurves;
+    setupCurvesDialog *setupCurves=new setupCurvesDialog(head);
+    setupCurves->exec();
+    delete setupCurves;
 
 
-    assignCurvesDialog *a = new assignCurvesDialog(head,this->dataSource);
-    connect(a,SIGNAL(setColumn(int,int,double,double)),this,SLOT(setColumn(int,int,double,double)));
-    connect(a,SIGNAL(setColumn(int,int,QString,QString)),this,SLOT(setColumn(int,int,QString,QString)));
-
-    if (a->exec()==QDialog::Accepted) {
-        pdata->columnCount=a->columns();
-        return true;
-    }
-return false;
-delete a;
+//    assignCurvesDialog *a = new assignCurvesDialog(head,this->dataSource);
+//    connect(a,SIGNAL(setColumn(int,int,double,double)),this,SLOT(setColumn(int,int,double,double)));
+//    connect(a,SIGNAL(setColumn(int,int,QString,QString)),this,SLOT(setColumn(int,int,QString,QString)));
+//
+//    if (a->exec()==QDialog::Accepted) {
+//        //pdata->columnCount=a->columns();
+//        return true;
+//    }
+//return false;
+//delete a;
 }
 
 void MainWindow::showBrowseNetworkDialog() {
@@ -185,110 +180,8 @@ qint32 MainWindow::timediff(QTime from, QTime to) {
 }
 
 
-void MainWindow::asciiToData(QStringList *data, bool overwrite) {
-    if (overwrite) {
-        this->daydiff=0;
-        this->initialTimestamp=0;
-        pdata->rawAsciiData.clear();
-        pdata->measureData.clear();
-        pdata->transitionData.clear();
-    }
-    //deprecated with pdata->appendAsciiData
-    //pdata->rawAsciiData.append(*data);
-    pdata->appendAsciiData(*data);
-
-//    QTime start_t,current_t;
-//    double start_timestamp=0,current_timestamp=0.0;
-//    QStringList column; //this string list will contain list of columns in current row.
-//    QString tmpstring, nextline;
-//    if (!this->initialTime.isNull()) start_t=this->initialTime;
-//    if (this->initialTimestamp>1) start_timestamp=this->initialTimestamp;
-//
-//
-//    for (int row=0;row<data->size();row++) {
-//        tmpstring=data->at(row);
-//        tmpstring=tmpstring.trimmed();
-//        if (tmpstring.startsWith("#",Qt::CaseSensitive)
-//            || tmpstring.startsWith("/",Qt::CaseSensitive)
-//            || tmpstring.trimmed().isEmpty()
-//             ) {
-//            continue;
-//        } else if (tmpstring.startsWith("*",Qt::CaseSensitive) && pdata->measureData.size()>0) {
-//            if (pdata->transitionData.last()!=pdata->measureData.last()) {
-//                pdata->transitionData.append(pdata->measureData.last());
-//            }
-//            continue;
-//        }
-//
-//
-//        column=tmpstring.split(this->delimiterRegExp);
-//        int columnCount=column.count();
-//        if (row==data->size()-1) {
-//            //this will update the latestTimestamp to the very last value in incoming data
-//            pdata->latestTimestamp=column.last();
-//        }
-//
-//        for (int columnIndex=0;columnIndex<columnCount;++columnIndex) {
-//            tmpstring=column[columnIndex];
-//
-//            //this will check the first row. if it is time in format h:mm:ss,
-//            //it will update the starting time and calculate difference in seconds.
-//            if (columnIndex==0 && tmpstring.contains(":")) {
-//                if (start_t.isNull()) {
-//                    start_t=QTime::fromString(tmpstring,"h:mm:ss");
-//                    this->initialTime=start_t;
-//                    if (!start_t.isValid()) {
-//                        start_t=QTime::QTime();
-//                    } else {
-//                        tmpstring="0";
-//                    }
-//
-//                } else {
-//                    current_t=QTime::fromString(tmpstring,"h:mm:ss");
-//                    tmpstring.setNum(timediff(initialTime,current_t));
-//                }
-//
-//                nextline+=tmpstring;
-//                continue;
-//
-//
-//            } else if (columnIndex==columnCount-1 && pdata->measureDataXcolumn==columnIndex) {
-//                if (start_timestamp<1) { //we should not compare timestamp to zero since it is a double
-//                    start_timestamp=tmpstring.toDouble();
-//                    this->initialTimestamp=start_timestamp;
-//                    tmpstring="0";
-//                } else {
-//                    current_timestamp=tmpstring.toDouble()-start_timestamp;
-//                    tmpstring.setNum(current_timestamp);
-//                }
-//            }
-//            if (columnIndex!=0)
-//            nextline+="\t"+tmpstring;
-//            else nextline+=tmpstring;
-//
-//            if (columnIndex==columnCount-1) {
-//                pdata->measureData.append(nextline);
-//                ui->plainTextEdit->appendPlainText(nextline);
-//                nextline.clear();
-//            }
-//
-//        }
-//
-//        if (row==0 && (overwrite || pdata->transitionData.isEmpty())) {
-//            pdata->transitionData.append(pdata->measureData.first());
-//        }
-//
-//    }
-
-
-
-    this->setNumPoints(pdata->measureData.count());
-    this->setNumTransitionPoints(pdata->transitionData.count());
-}
-
-
 void MainWindow::datagramToData(QStringList data) {
-    this->asciiToData(&data,false);
+    pdata->appendAsciiData(data);
 }
 
 void MainWindow::fileToData() {
@@ -300,13 +193,13 @@ void MainWindow::fileToData() {
     QStringList tmpstringlist;
     QTime start_t,current_t;
     fileData=inFile.readAll();
+    inFile.close();
     QString fileDataString(fileData);
     tmpstringlist=fileDataString.split("\n");
     while (tmpstringlist.last().trimmed().isEmpty()) {
         tmpstringlist.removeLast();
     }
-    this->asciiToData(&tmpstringlist,true);
-    inFile.close();
+    pdata->appendAsciiData(tmpstringlist);
 }
 
 
@@ -318,17 +211,17 @@ void MainWindow::fileOpen(QString filename) {
     this->currentFileName=filename;
     this->showFileChooseColumnsDialog();
     this->fileToData();
-    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
-        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
-            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
-            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
-        }
-        if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
-            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label);
-            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label+" (transition)",true);
-        }
-        plot->replot();
-    }
+//    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
+//        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
+//            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
+//            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
+//        }
+//        if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
+//            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label);
+//            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label+" (transition)",true);
+//        }
+//        plot->replot();
+//    }
 }
 
 void MainWindow::fileOpen() {
@@ -369,14 +262,14 @@ void MainWindow::fileSaveAs() {
 
 void MainWindow::showViewRawData() {
     viewRawData *a = new viewRawData(this);
-    a->setText(pdata->rawAsciiData);
+    a->setText(pdata->getRawData());
     a->exec();
     delete a;
 }
 
 void MainWindow::showViewParsedData() {
     viewParsedData *a = new viewParsedData(this);
-    a->model->setStringList(pdata->measureData);
+    //a->model->setStringList(pdata->measureData);
     a->exec();
     delete a;
 }
@@ -389,63 +282,63 @@ void MainWindow::showViewTableData() {
 }
 
 void MainWindow::drawData(int x_index, int y_index, bool rightAxis,QString label, int plotType) {
-    QStringList *data;
-    if (plotType==measurePlot) {
-        data=&pdata->measureData;
-    } else {
-        data=&pdata->transitionData;
-    }
-    qint64 points_count;
-    double *x_val;
-    double *y_val;
-    QString tmpstring="",str="";
-    QStringList tmpstringlist;
-
-    if (ui->monitorOnOffCheckBox->isChecked() && plotType==measurePlot) {
-        //points_count=ui->monitorPointCountSpinBox->value();
-        points_count=qMin(ui->monitorPointCountSpinBox->value(),data->size());
-        x_val = new double[points_count];
-        y_val = new double[points_count];
-        qint64 startposition=data->size()-points_count;
-        for (qint64 i=0;i<points_count;i++) {
-            tmpstring=data->at(startposition+i);
-            tmpstringlist=tmpstring.split("\t");
-            str=tmpstringlist[x_index];
-            x_val[i]=str.toDouble();
-            str=tmpstringlist[y_index];
-            y_val[i]=str.toDouble();
-        }
-
-
-    } else {
-
-        points_count=data->count();
-        x_val = new double[points_count];
-        y_val = new double[points_count];
-        for (int i=0;i<points_count;i++) {
-            //FIXME: need some more debug information here if any problem occurs
-            tmpstring=data->at(i);
-            tmpstringlist=tmpstring.split("\t");
-            if (x_index<tmpstringlist.size()) {
-                x_val[i]=tmpstringlist.at(x_index).toDouble();}
-            else {x_val[i]=0;}
-            if (y_index<tmpstringlist.size()) {
-                y_val[i]=tmpstringlist.at(y_index).toDouble();
-            }
-            else {y_val[i]=0;}
-
-
-        }
-    }
-
-    if (plotType==this->measurePlot) {
-        plot->insertCurve(x_val,y_val,points_count,rightAxis,label);
-    } else if (plotType==transitionPlot && ui->monitorOnOffCheckBox->isChecked()==false) {
-        plot->insertTransitionPoints(x_val,y_val,points_count,rightAxis,label);
-    }
-
-    delete x_val;
-    delete y_val;
+//    QStringList *data;
+//    if (plotType==measurePlot) {
+//        data=&pdata->measureData;
+//    } else {
+//        data=&pdata->transitionData;
+//    }
+//    qint64 points_count;
+//    double *x_val;
+//    double *y_val;
+//    QString tmpstring="",str="";
+//    QStringList tmpstringlist;
+//
+//    if (ui->monitorOnOffCheckBox->isChecked() && plotType==measurePlot) {
+//        //points_count=ui->monitorPointCountSpinBox->value();
+//        points_count=qMin(ui->monitorPointCountSpinBox->value(),data->size());
+//        x_val = new double[points_count];
+//        y_val = new double[points_count];
+//        qint64 startposition=data->size()-points_count;
+//        for (qint64 i=0;i<points_count;i++) {
+//            tmpstring=data->at(startposition+i);
+//            tmpstringlist=tmpstring.split("\t");
+//            str=tmpstringlist[x_index];
+//            x_val[i]=str.toDouble();
+//            str=tmpstringlist[y_index];
+//            y_val[i]=str.toDouble();
+//        }
+//
+//
+//    } else {
+//
+//        points_count=data->count();
+//        x_val = new double[points_count];
+//        y_val = new double[points_count];
+//        for (int i=0;i<points_count;i++) {
+//            //FIXME: need some more debug information here if any problem occurs
+//            tmpstring=data->at(i);
+//            tmpstringlist=tmpstring.split("\t");
+//            if (x_index<tmpstringlist.size()) {
+//                x_val[i]=tmpstringlist.at(x_index).toDouble();}
+//            else {x_val[i]=0;}
+//            if (y_index<tmpstringlist.size()) {
+//                y_val[i]=tmpstringlist.at(y_index).toDouble();
+//            }
+//            else {y_val[i]=0;}
+//
+//
+//        }
+//    }
+//
+//    if (plotType==this->measurePlot) {
+//        plot->insertCurve(x_val,y_val,points_count,rightAxis,label);
+//    } else if (plotType==transitionPlot && ui->monitorOnOffCheckBox->isChecked()==false) {
+//        plot->insertTransitionPoints(x_val,y_val,points_count,rightAxis,label);
+//    }
+//
+//    delete x_val;
+//    delete y_val;
 
 }
 
@@ -471,10 +364,10 @@ void MainWindow::updateTxBytes(quint32 txBytes) {
 }
 
 void MainWindow::updateInitialData(QStringList head) {
-    if (pdata->measureDataXcolumn<0) {
-        this->resetPlot();
-        this->assignCurves(head);
-    }
+//    if (pdata->measureDataXcolumn<0) {
+//        this->resetPlot();
+//        this->assignCurves(head);
+//    }
 //    this->gpibQueryInterval->stop(); //stop the measuring timer
     this->burstUpdate=true;
     ui->startStopButton->setChecked(false); //uncheck the button;
@@ -485,35 +378,36 @@ void MainWindow::updateInitialData(QStringList head) {
     }
 
 void MainWindow::updateCurrentData(QStringList data,QString from) {
-    if ((from=="0" && pdata->rawAsciiData.size()==0) || from==pdata->latestTimestamp) {
+    if ((from=="0" && pdata->rowCount()==0) || from==pdata->getLatestTimestamp()) {
         this->datagramToData(data);
         plot->clear();
 
-        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
-            //if (!this->burstUpdate) {
-                if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
-                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
-                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
-                }
-                if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
-                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label,measurePlot);
-                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,QString::QString(),transitionPlot);
-                }
-                plot->replot();
-                this->updateHeaterPower();
-
-
-            //}
-            if (this->burstUpdate && this->gpibQueryInterval->isActive()) {
-                this->gpibQueryInterval->stop();
-                this->gpibFetchData();
-                this->gpibQueryInterval->start();
-            }
-
-        }
-    }
+//        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
+//            //if (!this->burstUpdate) {
+//                if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
+//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
+//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
+//                }
+//                if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
+//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label,measurePlot);
+//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,QString::QString(),transitionPlot);
+//                }
+//                plot->replot();
+//                this->updateHeaterPower();
+//
+//
+//            //}
+//            if (this->burstUpdate && this->gpibQueryInterval->isActive()) {
+//                this->gpibQueryInterval->stop();
+//                this->gpibFetchData();
+//                this->gpibQueryInterval->start();
+//            }
+//
+//        }
+ //   }
     //this feature seems to be buggy
     //if (this->burstUpdate) this->gpibQueryInterval->setInterval(200);
+    }
 }
 
 void MainWindow::setDataSourceMode (int mode) {
@@ -544,20 +438,13 @@ void MainWindow::setDataSourceMode (int mode) {
 }
 
 void MainWindow::resetPlot(void) {
-    pdata->rawAsciiData.clear();
-    pdata->measureData.clear();;
-    pdata->transitionData.clear();
+    pdata->reset();
 
     this->initialTimestamp=0;
     this->initialTime=QTime::QTime();
     plot->clear();
     plot->enableAxis(QwtPlot::yRight,false);
-    pdata->measureDataXcolumn=-1;
-    pdata->measureDataY1column=-1;
-    pdata->measureDataY2column=-1;
-    pdata->measureDataY1Label="";
-    pdata->measureDataY2Label="";
-    pdata->columnCount=0;
+    //pdata->columnCount=0;
 
 
 }
@@ -576,8 +463,8 @@ void MainWindow::startStopNetworkExchange(bool start) {
 
 void MainWindow::gpibFetchData() {
     QByteArray query;
-    if (pdata->latestTimestamp.size()>0) {
-        QString tmp="get from "+pdata->latestTimestamp;
+    if (pdata->getLatestTimestamp().size()>0) {
+        QString tmp="get from "+pdata->getLatestTimestamp();
         query.append(tmp);
     }
     gpib->tx(query);
@@ -648,7 +535,7 @@ void MainWindow::updateHeaterPower() {
         return;
     }
     ui->powerGroupBox->setVisible(true);
-    QString line(pdata->measureData.last());
+    QString line;//(pdata->measureData.last());
     QStringList column=line.split(delimiterRegExp);
     double power=column.at(pdata->serviceInfoHeaterPowerColumn).toDouble();
     int percent=0;
@@ -677,31 +564,31 @@ void MainWindow::updateHeaterPower() {
 }
 
 void MainWindow::setColumn(int column,int axis,QString axisLabel,QString dataLabel) {
-    if (axis==QwtPlot::xBottom) {
-        pdata->measureDataXcolumn=column;
-    }
-     else
-    if (axis==QwtPlot::yLeft) {
-        pdata->measureDataY1column=column;
-        pdata->measureDataY1Label=dataLabel;
-    } else
-
-    if (axis==QwtPlot::yRight) {
-        pdata->measureDataY2column=column;
-        pdata->measureDataY2Label=dataLabel;
-    }
-
-    QwtText qwtAxisLabel(axisLabel);
-    if (axis==QwtPlot::yLeft) {
-        qwtAxisLabel.setColor(Qt::blue);
-    } else if (axis==QwtPlot::yRight) {
-        qwtAxisLabel.setColor(Qt::red);
-    }
-    QFont font;
-    font.setPointSize(font.pointSize()+2);
-    font.setBold(true);
-    qwtAxisLabel.setFont(font);
-    plot->setAxisTitle(axis, qwtAxisLabel);
+//    if (axis==QwtPlot::xBottom) {
+//        pdata->measureDataXcolumn=column;
+//    }
+//     else
+//    if (axis==QwtPlot::yLeft) {
+//        pdata->measureDataY1column=column;
+//        pdata->measureDataY1Label=dataLabel;
+//    } else
+//
+//    if (axis==QwtPlot::yRight) {
+//        pdata->measureDataY2column=column;
+//        pdata->measureDataY2Label=dataLabel;
+//    }
+//
+//    QwtText qwtAxisLabel(axisLabel);
+//    if (axis==QwtPlot::yLeft) {
+//        qwtAxisLabel.setColor(Qt::blue);
+//    } else if (axis==QwtPlot::yRight) {
+//        qwtAxisLabel.setColor(Qt::red);
+//    }
+//    QFont font;
+//    font.setPointSize(font.pointSize()+2);
+//    font.setBold(true);
+//    qwtAxisLabel.setFont(font);
+//    plot->setAxisTitle(axis, qwtAxisLabel);
 }
 
 void MainWindow::setColumn(int column,int service,double low_limit,double high_limit) {

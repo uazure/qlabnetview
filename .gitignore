@@ -10,3 +10,5 @@ src/monitor/*.pro.user
 src/qlabnetfake/qlabnetfake
 src/qlabnetview/qlabnetview
 src/monitor/qlnmonitor
+doc
+Doxyfile

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 #include "mainwindow.h"
-#include "gpibtablemodel.h"
 #include "mainwindow.h"
 
 namespace Ui {
@@ -39,7 +38,7 @@ protected:
 
 private:
     Ui::viewTableData *ui;
-    gpibTableModel *model;
+    gpibData *model;
 };
 
 #endif // VIEWTABLEDATA_H

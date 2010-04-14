@@ -24,20 +24,14 @@ viewTableData::viewTableData(MainWindow *parent) :
     ui(new Ui::viewTableData)
 {
     ui->setupUi(this);
-    model = new gpibTableModel();
-    model->setArray(&parent->pdata->ddata);
+    model = parent->pdata;
     ui->tableView->verticalHeader()->setDefaultSectionSize(16);
     ui->tableView->setModel(model);
-
-
-
-
 }
 
 viewTableData::~viewTableData()
 {
     delete ui;
-    delete model;
 }
 
 void viewTableData::changeEvent(QEvent *e)

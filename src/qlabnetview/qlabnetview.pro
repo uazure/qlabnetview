@@ -7,7 +7,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
     about.cpp \
-    assignCurvesDialog.cpp \
     plot.cpp \
     zoomer.cpp \
     networkDialog.cpp \
@@ -18,13 +17,11 @@ SOURCES += main.cpp \
     viewrawdata.cpp \
     viewparseddata.cpp \
     gpibdata.cpp \
-    gpibtablemodel.cpp \
     viewtabledata.cpp \
     canvaspicker.cpp \
-    setcurvesdialog.cpp
+    setupcurvesdialog.cpp
 HEADERS += mainwindow.h \
     about.h \
-    assignCurvesDialog.h \
     plot.h \
     zoomer.h \
     networkDialog.h \
@@ -35,14 +32,12 @@ HEADERS += mainwindow.h \
     viewrawdata.h \
     viewparseddata.h \
     gpibdata.h \
-    gpibtablemodel.h \
     viewtabledata.h \
     main.h \
     canvaspicker.h \
-    setcurvesdialog.h
+    setupcurvesdialog.h
 FORMS += mainwindow.ui \
     about.ui \
-    assignCurvesDialog.ui \
     networkDialog.ui \
     errormessagedialog.ui \
     experimentControl.ui \
@@ -50,10 +45,10 @@ FORMS += mainwindow.ui \
     viewrawdata.ui \
     viewparseddata.ui \
     viewtabledata.ui \
-    setcurvesdialog.ui
+    setupcurvesdialog.ui
 unix { 
     LIBS += -lqwt
-    INCLUDEPATH += /usr/include/qwt5/
+    INCLUDEPATH += /usr/include/qwt/
 }
 win32 { 
     LIBS += -L"../../" \
