@@ -4,6 +4,10 @@
 #include <QDialog>
 #include <QStringList>
 #include "mainwindow.h"
+#include <QString>
+
+class Plot;
+class GpibData;
 
 namespace Ui {
     class setupCurvesDialog;
@@ -12,7 +16,7 @@ namespace Ui {
 class setupCurvesDialog : public QDialog {
     Q_OBJECT
 public:
-    setupCurvesDialog(QStringList head, int mode=MainWindow::modeFile);
+    setupCurvesDialog(QStringList head, GpibData *pdata, int mode=MainWindow::modeFile);
     ~setupCurvesDialog();
 
 protected:
@@ -20,6 +24,15 @@ protected:
 
 private:
     Ui::setupCurvesDialog *ui;
+    Plot *plot;
+    GpibData *gpibdata;
+
+private slots:
+    void addCurve();
+    void setBottomTitle(QString title);
+    void setLeftTitle(QString title);
+    void setRightTitle(QString title);
+
 };
 
 #endif // SETUPCURVESDIALOG_H

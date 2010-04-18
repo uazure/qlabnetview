@@ -25,12 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVector>
 
 
-class gpibData:public QAbstractTableModel
+class GpibData:public QAbstractTableModel
 {
     Q_OBJECT;
 public:
-    gpibData();
-    ~gpibData();
+    GpibData();
+    ~GpibData();
     //this section is for TableModel
     QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent=QModelIndex()) const ;
@@ -39,7 +39,10 @@ public:
 
     //this section is public getters
     QStringList getRawData() const;
+    const QStringList getMeasureData(void) const;
     QString getLatestTimestamp() const;
+
+    const double* getColumnData(int columnId) const;
 
 
     int serviceInfoHeLevelColumn; //this int contains column in data source containing the He level values
@@ -50,7 +53,7 @@ public:
     QRegExp delimiterRegExp;
 
 protected:
-    QList<QList<double> > ddata;
+    QVector<QVector<double> > ddata;
 
 private:
     QStringList rawAsciiData;

@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     gpibdata.cpp \
     viewtabledata.cpp \
     canvaspicker.cpp \
-    setupcurvesdialog.cpp
+    setupcurvesdialog.cpp \
+    plotcurve.cpp
 HEADERS += mainwindow.h \
     about.h \
     plot.h \
@@ -35,7 +36,8 @@ HEADERS += mainwindow.h \
     viewtabledata.h \
     main.h \
     canvaspicker.h \
-    setupcurvesdialog.h
+    setupcurvesdialog.h \
+    plotcurve.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \
@@ -48,7 +50,7 @@ FORMS += mainwindow.ui \
     setupcurvesdialog.ui
 unix { 
     LIBS += -lqwt
-    INCLUDEPATH += /usr/include/qwt/
+    INCLUDEPATH += /usr/include/qwt5/
 }
 win32 { 
     LIBS += -L"../../" \

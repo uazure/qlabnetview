@@ -24,7 +24,7 @@ Zoomer::Zoomer(int xAxis, int yAxis, QwtPlotCanvas *canvas):
         QwtPlotZoomer(xAxis, yAxis, canvas)
 
 {
-    canvas->replot();
+//    canvas->replot();
     this->setRubberBand(QwtPicker::RectRubberBand);
     switch (yAxis) {
         case QwtPlot::yLeft:

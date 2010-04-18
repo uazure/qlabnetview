@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 Plot::~Plot() {
-//delete panner;
-//delete magnifier;
+delete panner;
+delete magnifier;
 }
 
 Plot::Plot(QWidget *parent):
@@ -50,9 +50,9 @@ Plot::Plot(QWidget *parent):
 
 
     //legend
-    legend = new QwtLegend;
-    legend->setFrameStyle(QFrame::Box|QFrame::Sunken);
-    insertLegend(legend, QwtPlot::BottomLegend);
+//    legend = new QwtLegend;
+//    legend->setFrameStyle(QFrame::Box|QFrame::Sunken);
+//    insertLegend(legend, QwtPlot::BottomLegend);
 
     panner = new QwtPlotPanner(this->canvas());
     panner->setMouseButton(Qt::MidButton);

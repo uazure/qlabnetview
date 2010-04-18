@@ -1,7 +1,7 @@
 /**************************************************************************
 qlabnetview - is a Qt-based GUI application for experimental data representation and processing
-Copyright (C) 2009  Sergey Popov (aka azure)
-Last modification: 15 Dec 2009
+Copyright (C) 2010  Sergey Popov (aka azure)
+Last modification: 18 Apr 2010
 
 	This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,30 +15,25 @@ GNU General Public License for more details.
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef VIEWTABLEDATA_H
-#define VIEWTABLEDATA_H
+#ifndef PLOTCURVE_H
+#define PLOTCURVE_H
+#include "qwt_plot_curve.h"
+class GpibData;
 
-#include <QDialog>
-#include "mainwindow.h"
-#include "mainwindow.h"
-
-namespace Ui {
-    class viewTableData;
-}
-
-class viewTableData : public QDialog {
-    Q_OBJECT
+class PlotCurve : public QwtPlotCurve
+{
 public:
-    viewTableData(MainWindow *parent = 0);
-
-    ~viewTableData();
-
-protected:
-    void changeEvent(QEvent *e);
+    PlotCurve(int xColumnId, int yColumnId, GpibData *parent);
+    void setParent(GpibData* parent);
+    int getXColumn(void);
+    int getYColumn(void);
+    void setXColumn(int columnId);
+    void setYColumn(int columnId);
 
 private:
-    Ui::viewTableData *ui;
-    GpibData *model;
+    GpibData* parent;
+    int xColumn;
+    int yColumn;
 };
 
-#endif // VIEWTABLEDATA_H
+#endif // PLOTCURVE_H

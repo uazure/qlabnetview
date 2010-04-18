@@ -54,7 +54,7 @@ public:
     bool burstUpdate;
 
 
-    gpibData *pdata;
+    GpibData *pdata;
 
     QString currentFileName;
     Plot *plot;
@@ -68,7 +68,7 @@ public:
     QSettings settings;
     void drawData(int x_index, int y_index, bool rightAxis=false,QString label="",int plotType=measurePlot);
     void fileToData();
-    void datagramToData(QStringList data);
+    //void datagramToData(QStringList data);
     gpibSocket *gpib;
     QHostAddress gpibServer; //address of server to work with
 
@@ -90,6 +90,7 @@ public slots:
     void setDataSourceMode (int);
     void updateInterval (int);
     void updateHeaterPower();
+    void fileOpen(QString filename);
 
 private:
     Ui::MainWindow *ui;
@@ -111,7 +112,6 @@ private slots:
     void showViewRawData(void);
     void showViewParsedData(void);
     void showViewTableData(void);
-    void fileOpen(QString filename);
     void fileOpen();
     void fileOpenRecent(void);
     void fileSave();

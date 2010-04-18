@@ -29,10 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     //setup ui described in mainwindow.ui
 
-    //pdata = new PrivateData();
 
-
-    this->pdata=new gpibData();
+    this->pdata=new GpibData;
     ui->setupUi(this);
     ui->actionOpen_recent->setStatusTip(settings.value("recentFile","").toString());
     plot = new Plot(this);
@@ -133,21 +131,10 @@ void MainWindow::showFileChooseColumnsDialog() {
     }
 
 bool MainWindow::assignCurves(QStringList head) {
-    setupCurvesDialog *setupCurves=new setupCurvesDialog(head);
+    setupCurvesDialog *setupCurves=new setupCurvesDialog(head,this->pdata,this->dataSource);
     setupCurves->exec();
     delete setupCurves;
-
-
-//    assignCurvesDialog *a = new assignCurvesDialog(head,this->dataSource);
-//    connect(a,SIGNAL(setColumn(int,int,double,double)),this,SLOT(setColumn(int,int,double,double)));
-//    connect(a,SIGNAL(setColumn(int,int,QString,QString)),this,SLOT(setColumn(int,int,QString,QString)));
-//
-//    if (a->exec()==QDialog::Accepted) {
-//        //pdata->columnCount=a->columns();
-//        return true;
-//    }
-//return false;
-//delete a;
+    return true;
 }
 
 void MainWindow::showBrowseNetworkDialog() {
@@ -180,12 +167,13 @@ qint32 MainWindow::timediff(QTime from, QTime to) {
 }
 
 
-void MainWindow::datagramToData(QStringList data) {
-    pdata->appendAsciiData(data);
-}
+//void MainWindow::datagramToData(QStringList data) {
+//    pdata->appendAsciiData(data);
+//}
 
 void MainWindow::fileToData() {
 
+    pdata->reset();
     QFile inFile(this->currentFileName);
     inFile.open(QIODevice::ReadOnly);
     QByteArray fileData,tmp; //temp data arrays
@@ -204,13 +192,22 @@ void MainWindow::fileToData() {
 
 
 void MainWindow::fileOpen(QString filename) {
-    if (filename.isEmpty()) {
+
+
+    QFile file(filename);
+    if (file.exists()) {
+        this->setDataSourceMode(this->modeFile);
+        this->currentFileName=filename;
+        this->showFileChooseColumnsDialog();
+        this->fileToData();
+    } else {
         fileOpen();
-        return;
     }
-    this->currentFileName=filename;
-    this->showFileChooseColumnsDialog();
-    this->fileToData();
+
+
+
+
+
 //    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
 //        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
 //            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
@@ -222,30 +219,28 @@ void MainWindow::fileOpen(QString filename) {
 //        }
 //        plot->replot();
 //    }
+
 }
 
 void MainWindow::fileOpen() {
-    this->setDataSourceMode(this->modeFile);
-    this->resetPlot();
     QFileDialog *dialog=new QFileDialog();
     dialog->selectFile(this->settings.value("recentFile","").toString());
-    this->currentFileName=dialog->getOpenFileName(this,
+    QString filename=dialog->getOpenFileName(this,
         tr("Open data file"), this->settings.value("recentDir",QDir::rootPath()).toString(),tr("Data files (*.dat *.txt)"));
     delete dialog;
-    if (this->currentFileName.isEmpty()) {
+    if (filename.isEmpty()) {
         return;
     }
 
-    QString dirname=this->currentFileName.left(this->currentFileName.lastIndexOf("/")+1);
-    this->settings.setValue("recentFile", this->currentFileName);
+    QString dirname=filename.left(filename.lastIndexOf("/")+1);
+    this->settings.setValue("recentFile", filename);
     this->settings.setValue("recentDir",dirname);
-    this->fileOpen(this->currentFileName);
-
+    this->fileOpen(filename);
 }
 
 void MainWindow::fileOpenRecent() {
     this->setDataSourceMode(this->modeFile);
-    this->resetPlot();
+    //this->resetPlot();
     fileOpen(settings.value("recentFile","").toString());
 }
 
@@ -268,7 +263,7 @@ void MainWindow::showViewRawData() {
 }
 
 void MainWindow::showViewParsedData() {
-    viewParsedData *a = new viewParsedData(this);
+    viewParsedData *a = new viewParsedData(pdata->getMeasureData(),this);
     //a->model->setStringList(pdata->measureData);
     a->exec();
     delete a;
@@ -364,14 +359,11 @@ void MainWindow::updateTxBytes(quint32 txBytes) {
 }
 
 void MainWindow::updateInitialData(QStringList head) {
-//    if (pdata->measureDataXcolumn<0) {
-//        this->resetPlot();
-//        this->assignCurves(head);
-//    }
-//    this->gpibQueryInterval->stop(); //stop the measuring timer
+    this->assignCurves(head);
+    
+    this->gpibQueryInterval->stop(); //stop the measuring timer
     this->burstUpdate=true;
     ui->startStopButton->setChecked(false); //uncheck the button;
-
 
     this->updateCurrentData(head,"0");
     ui->startStopButton->setChecked(true); //check the button;
@@ -379,7 +371,7 @@ void MainWindow::updateInitialData(QStringList head) {
 
 void MainWindow::updateCurrentData(QStringList data,QString from) {
     if ((from=="0" && pdata->rowCount()==0) || from==pdata->getLatestTimestamp()) {
-        this->datagramToData(data);
+        pdata->appendAsciiData(data);
         plot->clear();
 
 //        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {

@@ -28,7 +28,7 @@ namespace Ui {
 class viewParsedData : public QDialog {
     Q_OBJECT
 public:
-    viewParsedData(QWidget *parent = 0);
+    viewParsedData(QStringList measureData, QWidget *parent = 0);
 
     ~viewParsedData();
 

@@ -32,12 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include "gpibdata.h"
 
-gpibData::gpibData()
+GpibData::GpibData()
 {
 
     serviceInfoHeaterPowerColumn=-1;
     serviceInfoHeLevelColumn=-1;
-    //columnCount=0;
 
     delimiterRegExp.setPattern("[\\ \\t]{1,9}"); //space (\\ ) or tab (\\t) {from 1 up to 9 in a row}
     this->daydiff=0;
@@ -45,11 +44,11 @@ gpibData::gpibData()
 
 }
 
-gpibData::~gpibData() {
+GpibData::~GpibData() {
 
 }
 
-int gpibData::timeToSeconds(QTime time) {
+int GpibData::timeToSeconds(QTime time) {
     if (this->initialTime.isNull()) {
         this->initialTime=time;
         return 0;
@@ -63,7 +62,7 @@ int gpibData::timeToSeconds(QTime time) {
     }
 }
 
-QVariant gpibData::data(const QModelIndex &index, int role) const {
+QVariant GpibData::data(const QModelIndex &index, int role) const {
 
     if (ddata.isEmpty() || role!=Qt::DisplayRole) {
         return QVariant();
@@ -75,14 +74,14 @@ QVariant gpibData::data(const QModelIndex &index, int role) const {
     return val;
 }
 
-int gpibData::columnCount(const QModelIndex &parent) const {
+int GpibData::columnCount(const QModelIndex &parent) const {
     int val=0;
     if (parent.isValid()) return 0;
     val=ddata.size();
     return val;
 }
 
-int gpibData::rowCount(const QModelIndex &parent) const {
+int GpibData::rowCount(const QModelIndex &parent) const {
     int val=0;
     if (parent.isValid()) return 0;
     if (ddata.isEmpty()) return 0;
@@ -90,7 +89,7 @@ int gpibData::rowCount(const QModelIndex &parent) const {
     return val;
 }
 
-Qt::ItemFlags gpibData::flags(const QModelIndex &index) const {
+Qt::ItemFlags GpibData::flags(const QModelIndex &index) const {
     if (!index.isValid())
              return Qt::ItemIsEnabled;
 
@@ -98,7 +97,7 @@ Qt::ItemFlags gpibData::flags(const QModelIndex &index) const {
 }
 
 
-double gpibData::timestampToSeconds(double time) {
+double GpibData::timestampToSeconds(double time) {
     /*!
       \brief Converts current timestamp to Seconds from the start of experiment
 
@@ -109,7 +108,7 @@ double gpibData::timestampToSeconds(double time) {
     return time-initialTimestamp;
 }
 
-void gpibData::appendStringToDdata(QString string) {
+void GpibData::appendStringToDdata(QString string) {
 
     /*!
     \brief Every single string with data is processed here.
@@ -131,7 +130,7 @@ void gpibData::appendStringToDdata(QString string) {
             tmpdouble=strlist.at(i).toDouble(&tmpbool);
             if (tmpbool) {
                 //QList<QList<T> > should be filled with QList<T>
-                QList<double> tmpdoublelist;
+                QVector<double> tmpdoublelist;
                 tmpdoublelist.append(tmpdouble);
                 this->ddata.append(tmpdoublelist);
             } else {
@@ -158,7 +157,7 @@ void gpibData::appendStringToDdata(QString string) {
 
 }
 
-void gpibData::appendAsciiData(QStringList stringList) {
+void GpibData::appendAsciiData(QStringList stringList) {
     /*!
       \brief When this slot is called, the list of string with data is processed
 
@@ -235,17 +234,33 @@ void gpibData::appendAsciiData(QStringList stringList) {
 }
 
 
-QStringList gpibData::getRawData() const {
+QStringList GpibData::getRawData() const {
     return this->rawAsciiData;
 }
 
-QString gpibData::getLatestTimestamp() const {
+QString GpibData::getLatestTimestamp() const {
     return this->latestTimestamp;
 }
 
 
-void gpibData::reset(void) {
+void GpibData::reset(void) {
+    rawAsciiData.clear();
+    measureData.clear();
+    transitionData.clear();
     ddata.clear();
     this->daydiff=0;
+    this->initialTime=QTime();
+    this->initialTimestamp=0;
 }
 
+const double* GpibData::getColumnData(int columnId) const {
+    if (columnId>=0 && columnId<columnCount()) {
+        return this->ddata.at(columnId).data();
+    }
+
+    return 0;
+}
+
+const QStringList GpibData::getMeasureData(void) const {
+    return this->measureData;
+}

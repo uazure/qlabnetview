@@ -18,12 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "viewparseddata.h"
 #include "ui_viewparseddata.h"
 
-viewParsedData::viewParsedData(QWidget *parent) :
+viewParsedData::viewParsedData(QStringList measureData, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::viewParsedData)
 {
     ui->setupUi(this);
-    model = new QStringListModel();
+    model = new QStringListModel(measureData);
     ui->listView->setModel(model);
 
 }
