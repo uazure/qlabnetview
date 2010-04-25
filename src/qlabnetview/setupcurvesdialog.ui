@@ -158,7 +158,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="curveColumComboBox"/>
+      <widget class="QComboBox" name="curveColumComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="addCurveButton">

@@ -18,40 +18,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "plotcurve.h"
 #include "gpibdata.h"
 #include <QDebug>
+#include <QObject>
 
-PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *parent)
+PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *gpibData)
 {
-    if (parent)
-        this->setParent(parent);
+    this->multiplier=1.;
+    if (gpibData)
+        this->gpibData=gpibData;
     else {
-        qCritical()<<"parent of GpibData does not exist";
+        qCritical()<<"gpibData of GpibData does not exist";
         return;
 }
-    if (xColumnId>=0 && xColumnId<parent->columnCount())
+    if (xColumnId>=0 && xColumnId<gpibData->columnCount())
         this->xColumn=xColumnId;
     else qCritical()<<"Error while constructing PlotCurve: xColumnId="<<xColumnId;
 
-    if (yColumnId>=0 && yColumnId<parent->columnCount())
+    if (yColumnId>=0 && yColumnId<gpibData->columnCount())
         this->yColumn=yColumnId;
     else qCritical()<<"Error while constructing PlotCurve: yColumnId="<<yColumnId;
 
-    this->setRawData(parent->getColumnData(xColumn),parent->getColumnData(yColumn),parent->rowCount());
+    this->setRawData(gpibData->getColumnData(xColumn),gpibData->getColumnData(yColumn),gpibData->rowCount());
 
 }
 
-void PlotCurve::setParent(GpibData *parent) {
-    this->parent=parent;
+PlotCurve::~PlotCurve(void) {
+
 }
+
 
 void PlotCurve::setXColumn(int columnId) {
     if (columnId<0) {
         qCritical()<<"Trying to set negative value as columnId";
         return;
     }
-    if (parent && columnId>=parent->columnCount())
+    if (gpibData && columnId>=gpibData->columnCount())
         this->xColumn=columnId;
     else
-        qCritical()<<"Either parent GpibData is not set or columnId is greater than maximum value";
+        qCritical()<<"Either gpibData GpibData is not set or columnId is greater than maximum value";
 }
 
 void PlotCurve::setYColumn(int columnId) {
@@ -60,10 +63,10 @@ void PlotCurve::setYColumn(int columnId) {
         return;
     }
 
-    if (parent && columnId>=parent->columnCount())
+    if (gpibData && columnId>=gpibData->columnCount())
         this->yColumn=columnId;
     else
-        qCritical()<<"Either parent GpibData is not set or columnId is greater than maximum value";
+        qCritical()<<"Either gpibData GpibData is not set or columnId is greater than maximum value";
 }
 
 int PlotCurve::getXColumn(void) {
@@ -72,4 +75,16 @@ int PlotCurve::getXColumn(void) {
 
 int PlotCurve::getYColumn(void) {
     return this->yColumn;
+}
+
+void PlotCurve::setName(QString name) {
+    this->name=name;
+}
+
+QString PlotCurve::getName(void) {
+    return this->name;
+}
+
+void PlotCurve::update() {
+    this->setRawData(gpibData->getColumnData(xColumn),gpibData->getColumnData(yColumn),gpibData->rowCount());
 }

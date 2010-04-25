@@ -12,6 +12,7 @@ setupCurvesDialog::setupCurvesDialog(
     ui(new Ui::setupCurvesDialog)
 {
     ui->setupUi(this);
+    ui->plainTextEdit->clear();
     for (int i = 0 ; i< head.size(); i++) {
         ui->plainTextEdit->appendPlainText(head.at(i));
         //scroll the widget to beginning
