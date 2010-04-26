@@ -204,7 +204,7 @@ void experimentControl::applyWorkplan() {
     gpib->serverSetWorkplan(this->workplanModel->stringList());
 
     gpib->serverGetWorkplanIndex();
-    this->workplanModel->setStringList(QStringList::QStringList());
+    this->workplanModel->setStringList(QStringList());
 
 }
 

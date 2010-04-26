@@ -8,6 +8,8 @@
 
 class Plot;
 class GpibData;
+class PlotCurve;
+class PlotCurveListModel;
 
 namespace Ui {
     class setupCurvesDialog;
@@ -26,6 +28,8 @@ private:
     Ui::setupCurvesDialog *ui;
     Plot *plot;
     GpibData *gpibdata;
+    QList<PlotCurve*> curveList;
+    PlotCurveListModel *curveListModel;
 
 private slots:
     void addCurve();

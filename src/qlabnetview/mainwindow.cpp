@@ -433,7 +433,7 @@ void MainWindow::resetPlot(void) {
     pdata->reset();
 
     this->initialTimestamp=0;
-    this->initialTime=QTime::QTime();
+    this->initialTime=QTime();
     plot->clear();
     plot->enableAxis(QwtPlot::yRight,false);
     //pdata->columnCount=0;

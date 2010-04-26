@@ -1,7 +1,7 @@
 /**************************************************************************
 qlabnetview - is a Qt-based GUI application for experimental data representation and processing
-Copyright (C) 2009  Sergey Popov (aka azure)
-Last modification: 15 Dec 2009
+Copyright (C) 2010  Sergey Popov (aka azure)
+Last modification: 26 Apr 2010
 
 	This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,34 +15,22 @@ GNU General Public License for more details.
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "viewtabledata.h"
-#include "ui_viewtabledata.h"
 
 
-viewTableData::viewTableData(MainWindow *parent) :
-    QDialog(parent),
-    ui(new Ui::viewTableData)
+
+#include "plotcurvelistmodel.h"
+
+PlotCurveListModel::PlotCurveListModel(QList<PlotCurve *> *parentCurveList) :
+    QAbstractListModel()
 {
-    ui->setupUi(this);
-    model = parent->pdata;
-    ui->tableView->verticalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).height()+2);
-    ui->tableView->verticalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).height());
-    ui->tableView->setModel(model);
+    this->curveList=parentCurveList;
+
 }
 
-viewTableData::~viewTableData()
-{
-    delete ui;
+int PlotCurveListModel::rowCount(const QModelIndex &parent) const {
+    return curveList->count();
 }
 
-void viewTableData::changeEvent(QEvent *e)
-{
-    QDialog::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
+QVariant PlotCurveListModel::data(const QModelIndex &index, int role) const {
+    return QVariant(curveList->at(index.row())->getName());
 }

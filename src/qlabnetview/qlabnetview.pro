@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     viewtabledata.cpp \
     canvaspicker.cpp \
     setupcurvesdialog.cpp \
-    plotcurve.cpp
+    plotcurve.cpp \
+    plotcurvelistmodel.cpp
 HEADERS += mainwindow.h \
     about.h \
     plot.h \
@@ -37,7 +38,8 @@ HEADERS += mainwindow.h \
     main.h \
     canvaspicker.h \
     setupcurvesdialog.h \
-    plotcurve.h
+    plotcurve.h \
+    plotcurvelistmodel.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \
@@ -48,9 +50,13 @@ FORMS += mainwindow.ui \
     viewparseddata.ui \
     viewtabledata.ui \
     setupcurvesdialog.ui
+
+# QWT_NAME = qwt5
+QWT_NAME = qwt
+QWT_INCLUDE_PATH = /usr/include/$$QWT_NAME
 unix { 
-    LIBS += -lqwt
-    INCLUDEPATH += /usr/include/qwt5/
+    LIBS += -l$$QWT_NAME
+    INCLUDEPATH += $$QWT_INCLUDE_PATH
 }
 win32 { 
     LIBS += -L"../../" \
@@ -59,6 +65,8 @@ win32 {
     CONFIG += release
 }
 RESOURCES += ../../icons.qrc
+message(Qt version: $$[QT_VERSION])
+message(Using $$QWT_NAME header files installed in $$QWT_INCLUDE_PATH)
 
 # installation related stuff
 INSTALLS += target

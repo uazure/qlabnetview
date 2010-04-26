@@ -5,6 +5,7 @@
 #include "gpibdata.h"
 #include "plotcurve.h"
 #include "qwt_legend.h"
+#include "plotcurvelistmodel.h"
 
 setupCurvesDialog::setupCurvesDialog(
         QStringList head, GpibData* parentData, int mode) :
@@ -47,7 +48,7 @@ setupCurvesDialog::setupCurvesDialog(
     gpibdata->appendAsciiData(head);
 
     //set the vertival header of the table to have height of the current font height+1 (for border)
-    ui->tableView->verticalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).height()+1);
+    ui->tableView->verticalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).height()+2);
     ui->tableView->verticalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).height());
     ui->tableView->horizontalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).width('0')*10);
     ui->tableView->horizontalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).width('0')*4);
@@ -68,7 +69,8 @@ setupCurvesDialog::setupCurvesDialog(
     }
     ui->curveColumComboBox->setCurrentIndex(1);
 
-
+    curveListModel=new PlotCurveListModel(&curveList);
+    ui->listView->setModel(curveListModel);
 }
 
 setupCurvesDialog::~setupCurvesDialog()
@@ -118,11 +120,16 @@ void setupCurvesDialog::setRightTitle(QString title) {
 }
 
 void setupCurvesDialog::addCurve() {
+
     PlotCurve *curve = new PlotCurve(ui->XComboBox->currentIndex(),ui->curveColumComboBox->currentIndex(),this->gpibdata);
+
     plot->setAxisAutoScale(plot->xBottom);
     plot->setAxisAutoScale(plot->yLeft);
-
     curve->attach(this->plot);
+
+    this->curveList.append(curve);
+    ui->listView->update();
+    qDebug()<< "Row Count is"<<this->curveListModel->rowCount();
 
     plot->replot();
 
