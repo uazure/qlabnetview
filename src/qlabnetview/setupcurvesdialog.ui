@@ -205,6 +205,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="layoutMode">
+        <enum>QListView::Batched</enum>
+       </property>
       </widget>
      </item>
      <item>

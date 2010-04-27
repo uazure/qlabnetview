@@ -70,7 +70,9 @@ setupCurvesDialog::setupCurvesDialog(
     ui->curveColumComboBox->setCurrentIndex(1);
 
     curveListModel=new PlotCurveListModel(&curveList);
-    ui->listView->setModel(curveListModel);
+    //ui->listView->setModel(curveListModel);
+    //connect(curveListModel,SIGNAL(dataChanged(QModelIndex,QModelIndex)),ui->listView,SLOT(dataChanged(QModelIndex,QModelIndex)));
+
 }
 
 setupCurvesDialog::~setupCurvesDialog()
@@ -78,6 +80,7 @@ setupCurvesDialog::~setupCurvesDialog()
     delete ui;
     delete plot;
     delete gpibdata;
+    delete curveListModel;
 }
 
 void setupCurvesDialog::changeEvent(QEvent *e)
@@ -125,12 +128,24 @@ void setupCurvesDialog::addCurve() {
 
     plot->setAxisAutoScale(plot->xBottom);
     plot->setAxisAutoScale(plot->yLeft);
+
+    curve->setName(ui->curveLabel->text());
     curve->attach(this->plot);
 
     this->curveList.append(curve);
-    ui->listView->update();
+    this->curveListModel->update(curve);
+
+    ui->listView->setModel(this->curveListModel);
+
+    //ui->listView->update();
+
+    this->curveListModel->update(curve);
+    //this->curveListModel->beginInsertRows();
+
     qDebug()<< "Row Count is"<<this->curveListModel->rowCount();
+    qDebug()<< "Size of PlotCurve data is" << curve->dataSize();
 
     plot->replot();
+    plot->repaint();
 
 }

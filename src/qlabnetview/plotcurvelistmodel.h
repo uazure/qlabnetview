@@ -39,15 +39,17 @@ public:
     explicit PlotCurveListModel(QList<PlotCurve *> *);
     int rowCount(const QModelIndex & parent = QModelIndex() ) const;
     QVariant data (const QModelIndex & index, int role=Qt::DisplayRole) const ;
-
+    bool insertRow(int row, const QModelIndex & parent = QModelIndex());
 
 
 private:
     QList<PlotCurve *> *curveList;
 
 signals:
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
 public slots:
+    void update (PlotCurve*);
 
 };
 

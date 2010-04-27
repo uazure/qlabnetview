@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-
+#include <QDebug>
 
 #include "plotcurvelistmodel.h"
 
@@ -29,8 +29,28 @@ PlotCurveListModel::PlotCurveListModel(QList<PlotCurve *> *parentCurveList) :
 
 int PlotCurveListModel::rowCount(const QModelIndex &parent) const {
     return curveList->count();
+
 }
 
 QVariant PlotCurveListModel::data(const QModelIndex &index, int role) const {
-    return QVariant(curveList->at(index.row())->getName());
+    QVariant val;
+    val.setValue(curveList->at(index.row())->getName());
+    qDebug()<<"PlotCurve name at index"<<index.row()<<"is"<<val.toString();
+    return val;
+}
+
+bool PlotCurveListModel::insertRow(int row, const QModelIndex &parent) {
+
+    return true;
+}
+
+void PlotCurveListModel::update(PlotCurve* curve) {
+//    //beginLayoutChanged();
+//    emit this->layoutAboutToBeChanged();
+//    curveList->append(curve);
+//    changePersistentIndex(index(0,0),index(curveList->size(),0));
+//    //emit this->dataChanged(index(0,0),index(curveList->size()-1,0));
+//
+//    //endLayoutChanged();
+//    emit this->layoutChanged();
 }

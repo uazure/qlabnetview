@@ -51,9 +51,9 @@ FORMS += mainwindow.ui \
     viewtabledata.ui \
     setupcurvesdialog.ui
 
-# QWT_NAME = qwt5
+#QWT_NAME = qwt5
 QWT_NAME = qwt
-QWT_INCLUDE_PATH = /usr/include/$$QWT_NAME
+QWT_INCLUDE_PATH = /usr/include/qwt5/
 unix { 
     LIBS += -l$$QWT_NAME
     INCLUDEPATH += $$QWT_INCLUDE_PATH
