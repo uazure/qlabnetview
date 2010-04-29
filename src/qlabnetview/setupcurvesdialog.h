@@ -5,12 +5,16 @@
 #include <QStringList>
 #include "mainwindow.h"
 #include <QString>
+#include "PenStyleBox.h"
+#include "ColorBox.h"
+#include "SymbolBox.h"
 
 
 class Plot;
 class GpibData;
 class PlotCurve;
 class PlotCurveModel;
+
 
 namespace Ui {
     class setupCurvesDialog;
@@ -32,6 +36,9 @@ private:
     GpibData *gpibdata;
     QList<PlotCurve*> curveList;
     PlotCurveModel *curveListModel;
+    //PenStyleBox penStyleBox;
+    SymbolBox symbolBox;
+    ColorBox colorBox;
 
 
 
@@ -43,7 +50,10 @@ private slots:
     void setRightTitle(QString title);
 
 public slots:
-    void currentCurveChanged(QModelIndex index);
+    void currentCurveIndexChanged(QModelIndex index);
+    void currentSymbolChanged (int index);
+    void currentColorChanged (int index);
+    void currentWidthChanged (double width);
 
 };
 

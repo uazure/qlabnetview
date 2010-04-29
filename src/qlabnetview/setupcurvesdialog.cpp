@@ -5,7 +5,9 @@
 #include "gpibdata.h"
 #include "plotcurve.h"
 #include "qwt_legend.h"
+#include "qwt_symbol.h"
 #include "plotcurvemodel.h"
+
 
 setupCurvesDialog::setupCurvesDialog(
         QStringList head, GpibData* parentData, int mode) :
@@ -19,10 +21,20 @@ setupCurvesDialog::setupCurvesDialog(
         //scroll the widget to beginning
     }
     ui->plainTextEdit->scroll(0,-1024);
+
+    //! disable curve properties. It should be enabled only when curve
+    //! is selected
     ui->curvePropertiesBox->setEnabled(false);
 
+    //! Create a new plot and attach it to window
     plot = new Plot(this);
-    plot->enableAxis(plot->yRight);
+    //set the x axis label to "t, sec"
+    ui->plotBottomAxisTitle->setText("t, sec");
+    plot->setAxisScale(plot->yLeft,0,8,2);
+    plot->setAxisScale(plot->yRight,0,760);
+
+    plot->setAxisAutoScale(plot->xBottom);
+    plot->setAxisAutoScale(plot->yLeft);
     ui->plotLayout->addWidget(plot);
 
     //plot axis titles changes
@@ -32,16 +44,20 @@ setupCurvesDialog::setupCurvesDialog(
 
     connect(ui->addCurveButton,SIGNAL(clicked()),SLOT(addCurve()));
 
+    //! create PenStyleBox selector
+    ui->Color_and_WidthLayout->addWidget(&colorBox);
+    ui->SymbolBoxLayout->addWidget(&symbolBox);
+
+    connect(&symbolBox,SIGNAL(currentIndexChanged(int)),SLOT(currentSymbolChanged(int)));
+    connect(&colorBox,SIGNAL(currentIndexChanged(int)),SLOT(currentColorChanged(int)));
+    connect(ui->widthSpinBox,SIGNAL(valueChanged(double)),SLOT(currentWidthChanged(double)));
+
+
     //make lock checkbox affect the X axis selector
     connect(ui->XLockCheckbox,SIGNAL(toggled(bool)),ui->XComboBox,SLOT(setDisabled(bool)));
     ui->XLockCheckbox->setChecked(true);
     ui->XComboBox->setDisabled(true);
 
-
-    //set the x axis label to "t, sec"
-    ui->plotBottomAxisTitle->setText("t, sec");
-    plot->setAxisScale(plot->yLeft,0,8,2);
-    plot->setAxisScale(plot->yRight,0,760);
 
 
 
@@ -73,7 +89,10 @@ setupCurvesDialog::setupCurvesDialog(
 
     curveListModel=new PlotCurveModel(&curveList);
     ui->listView->setModel(curveListModel);
-    connect(ui->listView,SIGNAL(activated(QModelIndex)),SLOT(currentCurveChanged(QModelIndex)));
+    connect(ui->listView,SIGNAL(activated(QModelIndex)),
+            SLOT(currentCurveIndexChanged(QModelIndex)));
+    connect(ui->listView,SIGNAL(clicked(QModelIndex)),
+            SLOT(currentCurveIndexChanged(QModelIndex)));
 
 }
 
@@ -130,21 +149,88 @@ void setupCurvesDialog::addCurve() {
             ui->XComboBox->currentIndex(),
             ui->curveColumComboBox->currentIndex(),
             this->gpibdata);
+    QPen pen;
 
-    plot->setAxisAutoScale(plot->xBottom);
-    plot->setAxisAutoScale(plot->yLeft);
+    QBrush brush(Qt::SolidPattern);
+
+    QwtSymbol symbol(
+            QwtSymbol::Triangle,        //default is the triangle
+            QBrush(Qt::black),          //default color
+            QPen(Qt::NoPen),            //empty pen
+            QSize(7,7));                //hard-coded size
+
+
+    switch(ui->curveYComboBox->currentIndex()) {
+
+    case 1: //if yRight is selected
+        plot->enableAxis(plot->yRight);
+        plot->setAxisAutoScale(plot->yRight);
+        pen.setColor(Qt::red);
+        brush.setColor(Qt::red);
+        curve->setYAxis(Plot::yRight);
+        break;
+    default: //if yLeft is selected
+        pen.setColor(Qt::blue);
+        brush.setColor(Qt::blue);
+        break;
+    }
+    //pen.setWidthF(0.5);
+    symbol.setBrush(brush);
+    curve->setSymbol(symbol);
     curve->setName(ui->curveLabel->text());
+    curve->setPen(pen);
     curve->attach(this->plot);
     curveListModel->appendCurve(curve);
     plot->replot();
 }
 
-void setupCurvesDialog::currentCurveChanged(QModelIndex index) {
+void setupCurvesDialog::currentCurveIndexChanged(QModelIndex index) {
     ui->curvePropertiesBox->setEnabled(index.isValid());
-//    if (index.isValid())
-//        ui->curvePropertiesBox->setEnabled(true);
-//    else
-//        ui->curvePropertiesBox->setEnabled(false);
-    ui->currentCurveTitle->setText(curveList.at(index.row())->getName());
+    const PlotCurve *curve = curveList.at(index.row());
+    ui->currentCurveTitle->setText(curve->getName());
+    colorBox.setCurrentIndex(colorBox.colorIndex(curve->pen().color()));
+    ui->widthSpinBox->blockSignals(true);
+    ui->widthSpinBox->setValue(curve->pen().widthF());
+    ui->widthSpinBox->blockSignals(false);
+    symbolBox.setCurrentIndex(symbolBox.symbolIndex(curve->symbol().style()));
 
+    if (curve->yAxis()==QwtPlot::yLeft) {
+        ui->curveLeftRadio->setChecked(true);
+    } else {
+        ui->curveRightRadio->setChecked(true);
+    }
+}
+
+void setupCurvesDialog::currentSymbolChanged(int index) {
+    PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
+    QwtSymbol symbol(
+            symbolBox.selectedSymbol(), //current symbol
+            QBrush(colorBox.color()),   //current color
+            QPen(Qt::NoPen),                     //empty pen
+            QSize(7,7));                //hard-coded size
+    curve->setSymbol(symbol);
+    plot->replot();
+}
+
+void setupCurvesDialog::currentColorChanged(int index) {
+    PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
+    QPen pen(curve->pen());
+    pen.setColor(colorBox.color());
+    curve->setPen(pen);
+    QwtSymbol symbol=curve->symbol();
+    symbol.setBrush(colorBox.color());
+    curve->setSymbol(symbol);
+    plot->replot();
+}
+
+void setupCurvesDialog::currentWidthChanged(double width) {
+    if (width<0.49) return;
+    if (ui->listView->currentIndex().row()>=curveList.size()) return;
+
+    PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
+
+    QPen pen(curve->pen());
+    pen.setWidthF(width);
+    curve->setPen(pen);
+    plot->replot();
 }

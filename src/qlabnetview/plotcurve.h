@@ -51,7 +51,7 @@ public:
 
       \sa setName
       */
-    QString getName(void);
+    QString getName(void) const;
 
 
 private:

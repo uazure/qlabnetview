@@ -81,7 +81,7 @@ void PlotCurve::setName(QString name) {
     this->name=name;
 }
 
-QString PlotCurve::getName(void) {
+QString PlotCurve::getName(void) const {
     return this->name;
 }
 

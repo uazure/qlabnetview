@@ -45,7 +45,7 @@ public:
 		/**
 		 * \param parent parent widget (only affects placement of the widget)
 		 */
-  		SymbolBox(QWidget *parent);
+                SymbolBox(QWidget *parent=0);
 
   		void setStyle(const QwtSymbol::Style& c);
  		QwtSymbol::Style selectedSymbol() const;

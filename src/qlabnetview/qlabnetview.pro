@@ -21,7 +21,10 @@ SOURCES += main.cpp \
     canvaspicker.cpp \
     setupcurvesdialog.cpp \
     plotcurve.cpp \
-    plotcurvemodel.cpp
+    plotcurvemodel.cpp \
+    PenStyleBox.cpp \
+    ColorBox.cpp \
+    SymbolBox.cpp
 HEADERS += mainwindow.h \
     about.h \
     plot.h \
@@ -39,7 +42,10 @@ HEADERS += mainwindow.h \
     canvaspicker.h \
     setupcurvesdialog.h \
     plotcurve.h \
-    plotcurvemodel.h
+    plotcurvemodel.h \
+    PenStyleBox.h \
+    ColorBox.h \
+    SymbolBox.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \

@@ -44,6 +44,10 @@ Plot::Plot(QWidget *parent):
     setAutoReplot(false);
     QwtPlotDict *dict=new QwtPlotDict();
     dict->setAutoDelete(true);
+    QSizePolicy policy;
+    policy.setHorizontalPolicy(policy.MinimumExpanding);
+    policy.setVerticalPolicy(policy.MinimumExpanding);
+    this->setSizePolicy(policy);
 
     this->setAxisAutoScale(QwtPlot::xBottom);
     this->setAxisAutoScale(QwtPlot::yLeft);

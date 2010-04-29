@@ -200,7 +200,7 @@
      <item>
       <widget class="QListView" name="listView">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -217,6 +217,12 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QGroupBox" name="curvePropertiesBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Curve properties</string>
          </property>
@@ -231,7 +237,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="currentCurveTitle"/>
+             <widget class="QLineEdit" name="currentCurveTitle">
+              <property name="toolTip">
+               <string>Curve title</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -239,6 +249,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
              <widget class="QRadioButton" name="curveLeftRadio">
+              <property name="toolTip">
+               <string>Attach curve to left Y axis</string>
+              </property>
               <property name="text">
                <string>Left</string>
               </property>
@@ -246,12 +259,50 @@
             </item>
             <item>
              <widget class="QRadioButton" name="curveRightRadio">
+              <property name="toolTip">
+               <string>Attach curve to right Y axis</string>
+              </property>
               <property name="text">
                <string>Right</string>
               </property>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="Color_and_WidthLayout">
+            <item>
+             <widget class="QDoubleSpinBox" name="widthSpinBox">
+              <property name="toolTip">
+               <string>Line width</string>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::PlusMinus</enum>
+              </property>
+              <property name="suffix">
+               <string/>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>5.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="SymbolBoxLayout"/>
           </item>
           <item>
            <spacer name="verticalSpacer">
@@ -300,7 +351,37 @@
         <layout class="QVBoxLayout" name="plotLayout"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="plotBottomAxisTitle"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="plotBottomAxisTitle"/>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
