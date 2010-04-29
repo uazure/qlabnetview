@@ -5,7 +5,7 @@
 #include "gpibdata.h"
 #include "plotcurve.h"
 #include "qwt_legend.h"
-#include "plotcurvelistmodel.h"
+#include "plotcurvemodel.h"
 
 setupCurvesDialog::setupCurvesDialog(
         QStringList head, GpibData* parentData, int mode) :
@@ -19,6 +19,8 @@ setupCurvesDialog::setupCurvesDialog(
         //scroll the widget to beginning
     }
     ui->plainTextEdit->scroll(0,-1024);
+    ui->curvePropertiesBox->setEnabled(false);
+
     plot = new Plot(this);
     plot->enableAxis(plot->yRight);
     ui->plotLayout->addWidget(plot);
@@ -69,9 +71,9 @@ setupCurvesDialog::setupCurvesDialog(
     }
     ui->curveColumComboBox->setCurrentIndex(1);
 
-    curveListModel=new PlotCurveListModel(&curveList);
-    //ui->listView->setModel(curveListModel);
-    //connect(curveListModel,SIGNAL(dataChanged(QModelIndex,QModelIndex)),ui->listView,SLOT(dataChanged(QModelIndex,QModelIndex)));
+    curveListModel=new PlotCurveModel(&curveList);
+    ui->listView->setModel(curveListModel);
+    connect(ui->listView,SIGNAL(activated(QModelIndex)),SLOT(currentCurveChanged(QModelIndex)));
 
 }
 
@@ -124,28 +126,25 @@ void setupCurvesDialog::setRightTitle(QString title) {
 
 void setupCurvesDialog::addCurve() {
 
-    PlotCurve *curve = new PlotCurve(ui->XComboBox->currentIndex(),ui->curveColumComboBox->currentIndex(),this->gpibdata);
+    PlotCurve *curve = new PlotCurve(
+            ui->XComboBox->currentIndex(),
+            ui->curveColumComboBox->currentIndex(),
+            this->gpibdata);
 
     plot->setAxisAutoScale(plot->xBottom);
     plot->setAxisAutoScale(plot->yLeft);
-
     curve->setName(ui->curveLabel->text());
     curve->attach(this->plot);
-
-    this->curveList.append(curve);
-    this->curveListModel->update(curve);
-
-    ui->listView->setModel(this->curveListModel);
-
-    //ui->listView->update();
-
-    this->curveListModel->update(curve);
-    //this->curveListModel->beginInsertRows();
-
-    qDebug()<< "Row Count is"<<this->curveListModel->rowCount();
-    qDebug()<< "Size of PlotCurve data is" << curve->dataSize();
-
+    curveListModel->appendCurve(curve);
     plot->replot();
-    plot->repaint();
+}
+
+void setupCurvesDialog::currentCurveChanged(QModelIndex index) {
+    ui->curvePropertiesBox->setEnabled(index.isValid());
+//    if (index.isValid())
+//        ui->curvePropertiesBox->setEnabled(true);
+//    else
+//        ui->curvePropertiesBox->setEnabled(false);
+    ui->currentCurveTitle->setText(curveList.at(index.row())->getName());
 
 }

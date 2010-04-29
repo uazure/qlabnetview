@@ -21,7 +21,7 @@ SOURCES += main.cpp \
     canvaspicker.cpp \
     setupcurvesdialog.cpp \
     plotcurve.cpp \
-    plotcurvelistmodel.cpp
+    plotcurvemodel.cpp
 HEADERS += mainwindow.h \
     about.h \
     plot.h \
@@ -39,7 +39,7 @@ HEADERS += mainwindow.h \
     canvaspicker.h \
     setupcurvesdialog.h \
     plotcurve.h \
-    plotcurvelistmodel.h
+    plotcurvemodel.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \
@@ -53,10 +53,10 @@ FORMS += mainwindow.ui \
 
 #QWT_NAME = qwt5
 QWT_NAME = qwt
-QWT_INCLUDE_PATH = /usr/include/qwt5/
 unix { 
     LIBS += -l$$QWT_NAME
-    INCLUDEPATH += $$QWT_INCLUDE_PATH
+    INCLUDEPATH += /usr/include/qwt5/
+    INCLUDEPATH += /usr/include/qwt/
 }
 win32 { 
     LIBS += -L"../../" \
