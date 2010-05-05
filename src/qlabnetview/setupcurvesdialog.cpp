@@ -8,19 +8,41 @@
 #include "qwt_symbol.h"
 #include "plotcurvemodel.h"
 
+setupCurvesDialog::setupCurvesDialog(QStringList head, int mode) :
+        ui(new Ui::setupCurvesDialog) {
 
-setupCurvesDialog::setupCurvesDialog(
-        QStringList head, GpibData* parentData, int mode) :
-    QDialog(),
-    ui(new Ui::setupCurvesDialog)
-{
-    ui->setupUi(this);
+    gpibdata=new GpibData(this);
+    gpibdata->appendAsciiData(head);
+    init();
+
+    if (mode==MainWindow::modeNetwork) {
+        ui->XComboBox->setCurrentIndex(ui->XComboBox->count()-1);
+    }
+
+
     ui->plainTextEdit->clear();
     for (int i = 0 ; i< head.size(); i++) {
         ui->plainTextEdit->appendPlainText(head.at(i));
-        //scroll the widget to beginning
     }
+    //scroll the widget to beginning
     ui->plainTextEdit->scroll(0,-1024);
+
+}
+
+setupCurvesDialog::setupCurvesDialog(GpibData *pdata, QList<PlotCurve *> clist):
+        ui(new Ui::setupCurvesDialog)   {
+    gpibdata=pdata;
+    init();
+
+    this->curveList=clist;
+    for (int i=0; i<curveList.size();i++) {
+        curveList.value(i)->attach(plot);
+    }
+}
+
+
+void setupCurvesDialog::init() {
+    ui->setupUi(this);
 
     //! disable curve properties. It should be enabled only when curve
     //! is selected
@@ -61,19 +83,22 @@ setupCurvesDialog::setupCurvesDialog(
     ui->XLockCheckbox->setChecked(true);
     ui->XComboBox->setDisabled(true);
 
-
-
-
-    //create a gpibdata instance and fill it with head data
-    gpibdata=new GpibData;
-    gpibdata->appendAsciiData(head);
-
     //set the vertival header of the table to have height of the current font height+1 (for border)
     ui->tableView->verticalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).height()+2);
     ui->tableView->verticalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).height());
     ui->tableView->horizontalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).width('0')*10);
     ui->tableView->horizontalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).width('0')*4);
     ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
+    curveListModel=new PlotCurveModel(&curveList);
+
+
+
+    //create a gpibdata instance and fill it with head data
+     //;
+
+
+
 
     //assign gpibdata as model for ui->tableview
     ui->tableView->setModel(gpibdata);
@@ -85,12 +110,9 @@ setupCurvesDialog::setupCurvesDialog(
     }
 
     //set the default values in selectors with respect to the mode:
-    if (mode==MainWindow::modeNetwork) {
-        ui->XComboBox->setCurrentIndex(ui->XComboBox->count()-1);
-    }
     ui->curveColumComboBox->setCurrentIndex(1);
 
-    curveListModel=new PlotCurveModel(&curveList);
+
     ui->listView->setModel(curveListModel);
     connect(ui->listView,SIGNAL(activated(QModelIndex)),
             SLOT(currentCurveIndexChanged(QModelIndex)));
@@ -103,7 +125,7 @@ setupCurvesDialog::~setupCurvesDialog()
 {
     delete ui;
     delete plot;
-    delete gpibdata;
+    //delete gpibdata;
     delete curveListModel;
 }
 
@@ -268,6 +290,11 @@ void setupCurvesDialog::reject() {
 
 QList<PlotCurve *> setupCurvesDialog::getCurveList() {
     return curveList;
+}
+
+void setupCurvesDialog::setCurveList(QList<PlotCurve *> clist) {
+    this->curveList.clear();
+    this->curveList.append(clist);
 }
 
 QwtText setupCurvesDialog::plotAxisTitle(int axis) const {

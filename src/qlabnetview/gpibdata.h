@@ -29,7 +29,7 @@ class GpibData:public QAbstractTableModel
 {
     Q_OBJECT;
 public:
-    GpibData();
+    GpibData(QObject *parent=0);
     ~GpibData();
     //this section is for TableModel
     QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const;

@@ -27,7 +27,7 @@ class PlotCurve : public QObject, public QwtPlotCurve
     Q_OBJECT
 
 public:
-    PlotCurve(int xColumnId, int yColumnId, GpibData *parent);
+    PlotCurve(int xColumnId, int yColumnId, GpibData *dataStore=0);
     ~PlotCurve();
     /*!
       returns the index of the column assosiated with X in GpibData object
@@ -51,6 +51,8 @@ public:
 
       \sa setName
       */
+    void setGpibData (GpibData *dataStore);
+
     QString getName(void) const;
 
 

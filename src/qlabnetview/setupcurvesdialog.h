@@ -23,8 +23,10 @@ namespace Ui {
 class setupCurvesDialog : public QDialog {
     Q_OBJECT
 public:
-    setupCurvesDialog(QStringList head, GpibData *pdata, int mode=MainWindow::modeFile);
+    setupCurvesDialog(GpibData *parentData, QList<PlotCurve *> clist);
+    setupCurvesDialog(QStringList head, int mode=MainWindow::modeFile);
     QList<PlotCurve *> getCurveList();
+    void setCurveList(QList<PlotCurve *>);
     QwtText plotAxisTitle(int axis) const;
     bool plotAxisEnabled(int axis) const;
     ~setupCurvesDialog();
@@ -38,11 +40,9 @@ private:
     GpibData *gpibdata;
     QList<PlotCurve*> curveList;
     PlotCurveModel *curveListModel;
-    //PenStyleBox penStyleBox;
     SymbolBox symbolBox;
     ColorBox colorBox;
-
-
+    void init(void);
 
 
 private slots:

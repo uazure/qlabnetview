@@ -67,7 +67,6 @@ public:
     double initialTimestamp;
     qint32 daydiff;
     QSettings settings;
-    void drawData(int x_index, int y_index, bool rightAxis=false,QString label="",int plotType=measurePlot);
     void fileToData();
     //void datagramToData(QStringList data);
     gpibSocket *gpib;
@@ -102,15 +101,18 @@ private:
     QList<PlotCurve*> curveList;
 
 
-private slots:
-    //    void close();
-    void showFileChooseColumnsDialog();
+private slots:   
+    //! this function is used to prepare curves for new data (new file or
+    //! network source)
+    bool setupCurves(QStringList head, int mode=modeFile);
+    //! this function is used to adjust curves using current data
+    void setupCurves(GpibData *data);
     void showAbout();
-    void showAboutQt();
     void showExperimentControl(void);
     void showViewRawData(void);
     void showViewParsedData(void);
     void showViewTableData(void);
+    void showSetupCurvesDialog(void);
     void fileOpen();
     void fileOpenRecent(void);
     void fileSave();

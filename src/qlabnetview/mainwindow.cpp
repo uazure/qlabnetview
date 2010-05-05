@@ -20,6 +20,7 @@
 #include <QAction>
 #include <QTimer>
 #include "plotcurve.h"
+#include "qwt_legend.h"
 
 
 
@@ -29,11 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     //setup ui described in mainwindow.ui
 
-
     this->pdata=new GpibData;
     ui->setupUi(this);
     ui->actionOpen_recent->setStatusTip(settings.value("recentFile","").toString());
     plot = new Plot(this);
+    plot->legend->setVisible(true);
     ui->gridLayout->addWidget(plot,0,0);
     this->setDataSourceMode(modeNoop);
     ui->powerGroupBox->setVisible(false);
@@ -57,12 +58,13 @@ MainWindow::MainWindow(QWidget *parent)
     //show About window when Help->About clicked
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(showAbout()));
     //show About Qt when Help->About Qt clicked
-    connect(ui->actionAbout_Qt,SIGNAL(triggered()),SLOT(showAboutQt()));
+    connect(ui->actionAbout_Qt,SIGNAL(triggered()),qApp,SLOT(aboutQt()));
 
     connect(ui->actionExperiment_control,SIGNAL(triggered()),SLOT(showExperimentControl()));
     connect(ui->actionASCII_data,SIGNAL(triggered()),SLOT(showViewRawData()));
     connect(ui->actionParsed_data,SIGNAL(triggered()),SLOT(showViewParsedData()));
     connect(ui->actionTable_data,SIGNAL(triggered()),SLOT(showViewTableData()));
+    connect(ui->actionSetup_curves,SIGNAL(triggered()),SLOT(showSetupCurvesDialog()));
 
 
     connect(ui->replotButton,SIGNAL(clicked()),this->plot,SLOT(replot()));
@@ -104,46 +106,7 @@ void MainWindow::showAbout()
   delete about;
 }
 
-void MainWindow::showAboutQt() {
-    QApplication::aboutQt();
-}
 
-void MainWindow::showFileChooseColumnsDialog() {
-    QFile file(this->currentFileName);
-    if (!file.open(QFile::ReadOnly)) {
-        this->showErrorMessageDialog("Error opening file \""+this->currentFileName+"\"");
-        return;}
-        QByteArray buf;
-        QString tmp;
-        QStringList head;
-        for (int i=0;i<=10;i++) {
-            buf=file.readLine();
-            if (buf.size()<=0) {
-                break;
-            } else {
-                head.append(buf.trimmed());
-            }
-        }
-        file.close();
-
-        setupCurvesDialog dialog(head,this->pdata,this->dataSource);
-        dialog.exec();
-        PlotCurve *curve;
-        if (dialog.result()==QDialog::Accepted) {
-
-            plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
-            plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
-            plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
-            plot->setAxisTitle(QwtPlot::xBottom,dialog.plotAxisTitle(QwtPlot::xBottom));
-
-            this->curveList=dialog.getCurveList();
-            for (int i=0;i<curveList.size();i++) {
-                curve=curveList.value(i);
-                curve->attach(plot);
-            }
-            this->updatePlotCurves();
-        }
-    }
 
 void MainWindow::showBrowseNetworkDialog() {
     this->resetPlot();
@@ -174,11 +137,6 @@ qint32 MainWindow::timediff(QTime from, QTime to) {
     return diff;
 }
 
-
-//void MainWindow::datagramToData(QStringList data) {
-//    pdata->appendAsciiData(data);
-//}
-
 void MainWindow::fileToData() {
 
     pdata->reset();
@@ -199,14 +157,76 @@ void MainWindow::fileToData() {
 }
 
 
-void MainWindow::fileOpen(QString filename) {
+bool MainWindow::setupCurves(QStringList head, int mode) {
+    bool result=false;
+    setupCurvesDialog dialog(head,mode);
+    dialog.exec();
+    PlotCurve *curve;
+    if (dialog.result()==QDialog::Accepted) {
+        result=true;
+        plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
+        plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
+        plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
+        plot->setAxisTitle(QwtPlot::xBottom,dialog.plotAxisTitle(QwtPlot::xBottom));
 
+        this->curveList=dialog.getCurveList();
+        for (int i=0;i<curveList.size();i++) {
+            curve=curveList.value(i);
+            curve->attach(plot);
+            curve->setGpibData(pdata);
+        }
+        this->updatePlotCurves();
+    } else {
+        result=false;
+    }
+
+    return result;
+}
+void MainWindow::setupCurves(GpibData *data) {
+    setupCurvesDialog dialog(data,this->curveList);
+    dialog.exec();
+    if (dialog.result()==QDialog::Accepted) {
+        plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
+        plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
+        plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
+        plot->setAxisTitle(QwtPlot::xBottom,dialog.plotAxisTitle(QwtPlot::xBottom));
+        this->curveList=dialog.getCurveList();
+        PlotCurve *curve;
+        for (int i=0;i<curveList.size();i++) {
+            curve=curveList.value(i);
+            curve->attach(plot);
+            curve->setGpibData(pdata);
+        }
+        this->updatePlotCurves();
+    }
+}
+
+void MainWindow::fileOpen(QString filename) {
 
     QFile file(filename);
     if (file.exists()) {
-        this->setDataSourceMode(this->modeFile);
-        this->currentFileName=filename;
-        this->showFileChooseColumnsDialog();
+        if (!file.open(QFile::ReadOnly)) {
+            this->showErrorMessageDialog("Error opening file \""+this->currentFileName+"\"");
+            qWarning()<<"Error opening file"<<filename;
+            return;}
+
+        QByteArray buf;
+        QString tmp;
+        QStringList head;
+        //read first 10 lines
+        for (int i=0;i<=10;i++) {
+            buf=file.readLine();
+            if (buf.size()<=0) {
+                break;
+            } else {
+                head.append(buf.trimmed());
+            }
+        }
+        file.close();
+        if (this->setupCurves(head,modeFile)) {
+            this->currentFileName=filename;
+            this->setDataSourceMode(modeFile);
+        }
         this->fileToData();
         this->updatePlotCurves();
         plot->replot();
@@ -269,17 +289,16 @@ void MainWindow::showViewTableData() {
     delete a;
 }
 
-void MainWindow::drawData(int x_index, int y_index, bool rightAxis,QString label, int plotType) {
-
-}
-
 
 void MainWindow::showErrorMessageDialog(QString message) {
     errorMessageDialog *a=new errorMessageDialog(this);
     a->setMessage(message);
     a->exec();
     delete a;
+}
 
+void MainWindow::showSetupCurvesDialog() {
+    this->setupCurves(this->pdata);
 }
 
 void MainWindow::updateRtt(int msec) {
@@ -295,7 +314,7 @@ void MainWindow::updateTxBytes(quint32 txBytes) {
 }
 
 void MainWindow::updateInitialData(QStringList head) {
-    setupCurvesDialog dialog(head,this->pdata,this->dataSource);
+    setupCurvesDialog dialog(head,this->dataSource);
     dialog.exec();
     if (dialog.result()==QDialog::Accepted) {
         plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
@@ -487,5 +506,4 @@ void MainWindow::updatePlotCurves() {
                 pdata->rowCount()
                           );
     }
-
 }

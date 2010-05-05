@@ -20,11 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QObject>
 
-PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *gpibData=0)
+PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *dataStore)
 {
     this->multiplier=1.;
     if (gpibData)
-        this->gpibData=gpibData;
+        this->gpibData=dataStore;
     else {
         qCritical()<<"gpibData of GpibData does not exist";
         return;
@@ -84,6 +84,12 @@ void PlotCurve::setName(QString name) {
 
 QString PlotCurve::getName(void) const {
     return this->name;
+}
+
+void PlotCurve::setGpibData(GpibData *dataStore) {
+    if (dataStore) {
+        this->gpibData=dataStore;
+    } else qCritical()<<"setGpibData: dataStore is invalid";
 }
 
 

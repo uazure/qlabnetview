@@ -30,16 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include "gpibdata.h"
 
-GpibData::GpibData()
+GpibData::GpibData(QObject *parent) : QAbstractTableModel (parent)
 {
-
     serviceInfoHeaterPowerColumn=-1;
     serviceInfoHeLevelColumn=-1;
-
     delimiterRegExp.setPattern("[\\ \\t]{1,9}"); //space (\\ ) or tab (\\t) {from 1 up to 9 in a row}
     this->daydiff=0;
     this->initialTimestamp=0;
-
 }
 
 GpibData::~GpibData() {

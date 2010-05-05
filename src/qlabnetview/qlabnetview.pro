@@ -72,7 +72,7 @@ win32 {
 }
 RESOURCES += ../../icons.qrc
 message(Qt version: $$[QT_VERSION])
-message(Using $$QWT_NAME header files installed in $$QWT_INCLUDE_PATH)
+message(Using $$QWT_NAME)
 
 # installation related stuff
 INSTALLS += target

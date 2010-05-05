@@ -36,18 +36,14 @@ QVariant PlotCurveModel::data(const QModelIndex &index, int role) const {
         QVariant val(curveList->at(index.row())->getName());
         //qDebug()<<"PlotCurve name at index"<<index.row()<<"is"<<val.toString();
         return val;
-    }
-        else
-            return QVariant();
+    } else
+        return QVariant();
 }
 
 
 void PlotCurveModel::appendCurve(PlotCurve* curve) {
     emit this->layoutAboutToBeChanged();
-    //QModelIndex oldIndex=this->index(0,0);
     curveList->append(curve);
-    //QModelIndex newIndex=this->index(curveList->size()-1,0);
-    //this->changePersistentIndex(oldIndex,newIndex);
     emit this->layoutChanged();
 }
 
@@ -67,4 +63,10 @@ bool PlotCurveModel::setData(const QModelIndex &index, const QVariant &value, in
         return true;
     }
     return false;
+}
+
+void PlotCurveModel::setGpibData(GpibData *data) {
+    for (int i=0;i<curveList->size();i++) {
+        curveList->value(i)->setGpibData(data);
+    }
 }
