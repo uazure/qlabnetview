@@ -19,7 +19,7 @@
 #include <QList>
 #include <QAction>
 #include <QTimer>
-
+#include "plotcurve.h"
 
 
 
@@ -94,7 +94,6 @@ MainWindow::~MainWindow()
     delete plot;
     delete ui;
     delete pdata;
-
 }
 
 
@@ -127,15 +126,24 @@ void MainWindow::showFileChooseColumnsDialog() {
         }
         file.close();
 
-        this->assignCurves(head);
-    }
+        setupCurvesDialog dialog(head,this->pdata,this->dataSource);
+        dialog.exec();
+        PlotCurve *curve;
+        if (dialog.result()==QDialog::Accepted) {
 
-bool MainWindow::assignCurves(QStringList head) {
-    setupCurvesDialog *setupCurves=new setupCurvesDialog(head,this->pdata,this->dataSource);
-    setupCurves->exec();
-    delete setupCurves;
-    return true;
-}
+            plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
+            plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
+            plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
+            plot->setAxisTitle(QwtPlot::xBottom,dialog.plotAxisTitle(QwtPlot::xBottom));
+
+            this->curveList=dialog.getCurveList();
+            for (int i=0;i<curveList.size();i++) {
+                curve=curveList.value(i);
+                curve->attach(plot);
+            }
+            this->updatePlotCurves();
+        }
+    }
 
 void MainWindow::showBrowseNetworkDialog() {
     this->resetPlot();
@@ -200,26 +208,11 @@ void MainWindow::fileOpen(QString filename) {
         this->currentFileName=filename;
         this->showFileChooseColumnsDialog();
         this->fileToData();
+        this->updatePlotCurves();
+        plot->replot();
     } else {
         fileOpen();
     }
-
-
-
-
-
-//    if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
-//        if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
-//            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
-//            drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
-//        }
-//        if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
-//            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label);
-//            drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label+" (transition)",true);
-//        }
-//        plot->replot();
-//    }
-
 }
 
 void MainWindow::fileOpen() {
@@ -277,63 +270,6 @@ void MainWindow::showViewTableData() {
 }
 
 void MainWindow::drawData(int x_index, int y_index, bool rightAxis,QString label, int plotType) {
-//    QStringList *data;
-//    if (plotType==measurePlot) {
-//        data=&pdata->measureData;
-//    } else {
-//        data=&pdata->transitionData;
-//    }
-//    qint64 points_count;
-//    double *x_val;
-//    double *y_val;
-//    QString tmpstring="",str="";
-//    QStringList tmpstringlist;
-//
-//    if (ui->monitorOnOffCheckBox->isChecked() && plotType==measurePlot) {
-//        //points_count=ui->monitorPointCountSpinBox->value();
-//        points_count=qMin(ui->monitorPointCountSpinBox->value(),data->size());
-//        x_val = new double[points_count];
-//        y_val = new double[points_count];
-//        qint64 startposition=data->size()-points_count;
-//        for (qint64 i=0;i<points_count;i++) {
-//            tmpstring=data->at(startposition+i);
-//            tmpstringlist=tmpstring.split("\t");
-//            str=tmpstringlist[x_index];
-//            x_val[i]=str.toDouble();
-//            str=tmpstringlist[y_index];
-//            y_val[i]=str.toDouble();
-//        }
-//
-//
-//    } else {
-//
-//        points_count=data->count();
-//        x_val = new double[points_count];
-//        y_val = new double[points_count];
-//        for (int i=0;i<points_count;i++) {
-//            //FIXME: need some more debug information here if any problem occurs
-//            tmpstring=data->at(i);
-//            tmpstringlist=tmpstring.split("\t");
-//            if (x_index<tmpstringlist.size()) {
-//                x_val[i]=tmpstringlist.at(x_index).toDouble();}
-//            else {x_val[i]=0;}
-//            if (y_index<tmpstringlist.size()) {
-//                y_val[i]=tmpstringlist.at(y_index).toDouble();
-//            }
-//            else {y_val[i]=0;}
-//
-//
-//        }
-//    }
-//
-//    if (plotType==this->measurePlot) {
-//        plot->insertCurve(x_val,y_val,points_count,rightAxis,label);
-//    } else if (plotType==transitionPlot && ui->monitorOnOffCheckBox->isChecked()==false) {
-//        plot->insertTransitionPoints(x_val,y_val,points_count,rightAxis,label);
-//    }
-//
-//    delete x_val;
-//    delete y_val;
 
 }
 
@@ -359,7 +295,18 @@ void MainWindow::updateTxBytes(quint32 txBytes) {
 }
 
 void MainWindow::updateInitialData(QStringList head) {
-    this->assignCurves(head);
+    setupCurvesDialog dialog(head,this->pdata,this->dataSource);
+    dialog.exec();
+    if (dialog.result()==QDialog::Accepted) {
+        plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
+        plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
+        plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
+        this->curveList=dialog.getCurveList();
+        for (int i=0;i<curveList.size();i++) {
+            curveList.value(i)->attach(plot);
+        }
+    }
+
     
     this->gpibQueryInterval->stop(); //stop the measuring timer
     this->burstUpdate=true;
@@ -372,33 +319,8 @@ void MainWindow::updateInitialData(QStringList head) {
 void MainWindow::updateCurrentData(QStringList data,QString from) {
     if ((from=="0" && pdata->rowCount()==0) || from==pdata->getLatestTimestamp()) {
         pdata->appendAsciiData(data);
-        plot->clear();
-
-//        if (pdata->measureDataXcolumn>=0 && pdata->measureDataXcolumn<pdata->columnCount) {
-//            //if (!this->burstUpdate) {
-//                if (pdata->measureDataY1column>=0 && pdata->measureDataY1column<pdata->columnCount  && pdata->measureDataY1column!=pdata->measureDataXcolumn) {
-//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,pdata->measureDataY1Label,measurePlot);
-//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY1column,false,QString::QString(),transitionPlot);
-//                }
-//                if (pdata->measureDataY2column>=0 && pdata->measureDataY2column<pdata->columnCount  && pdata->measureDataY2column!=pdata->measureDataXcolumn) {
-//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,pdata->measureDataY2Label,measurePlot);
-//                    drawData(pdata->measureDataXcolumn,pdata->measureDataY2column,true,QString::QString(),transitionPlot);
-//                }
-//                plot->replot();
-//                this->updateHeaterPower();
-//
-//
-//            //}
-//            if (this->burstUpdate && this->gpibQueryInterval->isActive()) {
-//                this->gpibQueryInterval->stop();
-//                this->gpibFetchData();
-//                this->gpibQueryInterval->start();
-//            }
-//
-//        }
- //   }
-    //this feature seems to be buggy
-    //if (this->burstUpdate) this->gpibQueryInterval->setInterval(200);
+        this->updatePlotCurves();
+        plot->replot();
     }
 }
 
@@ -555,45 +477,15 @@ void MainWindow::updateHeaterPower() {
     ui->powerPercentLabel->setText(QString::number(percent)+"%");
 }
 
-void MainWindow::setColumn(int column,int axis,QString axisLabel,QString dataLabel) {
-//    if (axis==QwtPlot::xBottom) {
-//        pdata->measureDataXcolumn=column;
-//    }
-//     else
-//    if (axis==QwtPlot::yLeft) {
-//        pdata->measureDataY1column=column;
-//        pdata->measureDataY1Label=dataLabel;
-//    } else
-//
-//    if (axis==QwtPlot::yRight) {
-//        pdata->measureDataY2column=column;
-//        pdata->measureDataY2Label=dataLabel;
-//    }
-//
-//    QwtText qwtAxisLabel(axisLabel);
-//    if (axis==QwtPlot::yLeft) {
-//        qwtAxisLabel.setColor(Qt::blue);
-//    } else if (axis==QwtPlot::yRight) {
-//        qwtAxisLabel.setColor(Qt::red);
-//    }
-//    QFont font;
-//    font.setPointSize(font.pointSize()+2);
-//    font.setBold(true);
-//    qwtAxisLabel.setFont(font);
-//    plot->setAxisTitle(axis, qwtAxisLabel);
-}
-
-void MainWindow::setColumn(int column,int service,double low_limit,double high_limit) {
-    //just go back if the column is not set (i.e. negative)
-    if (column<0) return;
-
-    switch (service) {
-        case serviceHeater:
-            pdata->serviceInfoHeaterPowerColumn=column;
-            ui->powerGroupBox->setVisible(true);
-            break;
-        case serviceHeLevel:
-            pdata->serviceInfoHeLevelColumn=column;
-            break;
+void MainWindow::updatePlotCurves() {
+    PlotCurve *curve;
+    for (int i=0;i<curveList.size();i++) {
+        curve=curveList.value(i);
+        curve->setRawData(
+                pdata->getColumnData(curve->getXColumn()),
+                pdata->getColumnData(curve->getYColumn()),
+                pdata->rowCount()
+                          );
     }
+
 }

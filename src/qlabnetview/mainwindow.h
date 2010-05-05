@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QTimer;
 class experimentControl;
+class PlotCurve;
 
 namespace Ui
 {
@@ -86,6 +87,7 @@ public slots:
     void updateTxBytes (quint32 txBytes);
     void updateInitialData(QStringList head);
     void updateCurrentData(QStringList data,QString from);
+    void updatePlotCurves();
     void gpibNoNewData();
     void setDataSourceMode (int);
     void updateInterval (int);
@@ -95,16 +97,13 @@ public slots:
 private:
     Ui::MainWindow *ui;
     int dataSource;
-    bool assignCurves(QStringList head);
     QTimer *gpibQueryInterval;
     experimentControl *experimentControlDialog;
+    QList<PlotCurve*> curveList;
 
 
 private slots:
     //    void close();
-
-    void setColumn(int column,int axis,QString axisLabel,QString dataLabel);
-    void setColumn(int column,int serviceInfo,double low_limit,double high_limit);
     void showFileChooseColumnsDialog();
     void showAbout();
     void showAboutQt();

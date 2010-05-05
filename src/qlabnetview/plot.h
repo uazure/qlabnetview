@@ -26,6 +26,7 @@ class QwtPlotGrid;
 class QwtPlotMagnifier;
 class QwtLegend;
 class QwtPlotPicker;
+class QwtPlotMarker;
 
 class Plot : public QwtPlot
 {
@@ -42,13 +43,10 @@ public:
     QwtPlotMagnifier *magnifier;
     QwtLegend *legend;
     QwtPlotGrid *grid, *gridRight;
+    QList<QwtPlotMarker *> markerList;
 
 public slots:
-    long insertCurve(double * x_data,double* y_data, long points_count, bool rightAxis=false, QString label="");
-    void insertTransitionPoints (double *x_data, double *y_data, long points_count,bool rightAxis=false, QString label="(transition)");
     void clear();
-
-
 };
 
 

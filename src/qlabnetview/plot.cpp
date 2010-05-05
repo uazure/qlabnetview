@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <qwt_plot_panner.h>
 #include <qwt_plot_magnifier.h>
 #include <qwt_legend.h>
+#include <qwt_plot_marker.h>
 #include <QColor>
 
 
@@ -48,10 +49,18 @@ Plot::Plot(QWidget *parent):
     policy.setHorizontalPolicy(policy.MinimumExpanding);
     policy.setVerticalPolicy(policy.MinimumExpanding);
     this->setSizePolicy(policy);
+//    QwtPlotMarker *marker = new QwtPlotMarker();
+//    marker->setValue(1,1);
+//    marker->setLineStyle(QwtPlotMarker::VLine);
+//    QPen pen;
+//    pen.setStyle(Qt::SolidLine);
+//    pen.setWidthF(2);
+//    pen.setColor(Qt::red);
+//    marker->setLinePen(pen);
+//    marker->attach(this);
 
     this->setAxisAutoScale(QwtPlot::xBottom);
     this->setAxisAutoScale(QwtPlot::yLeft);
-
 
     //legend
 //    legend = new QwtLegend;
@@ -64,7 +73,7 @@ Plot::Plot(QWidget *parent):
 
     magnifier = new QwtPlotMagnifier(this->canvas());
     magnifier->setMouseButton(Qt::NoButton);
-    magnifier->setWheelFactor(1.1);
+    magnifier->setWheelFactor(1.2);
     magnifier->setEnabled(true);
 
     picker = new QwtPlotPicker(
@@ -83,11 +92,11 @@ Plot::Plot(QWidget *parent):
 
 //     grid
     grid=new QwtPlotGrid;
-    grid->setMajPen(QPen(Qt::darkBlue,0,Qt::DashLine));
+    grid->setMajPen(QPen(Qt::darkBlue,0,Qt::SolidLine));
     grid->attach(this);
 
     gridRight=new QwtPlotGrid();
-    gridRight->setMajPen(QPen(Qt::darkRed,0,Qt::DashLine));
+    gridRight->setMajPen(QPen(Qt::darkRed,0,Qt::SolidLine));
     gridRight->setAxis(QwtPlot::xBottom,QwtPlot::yRight);
     gridRight->enableX(false);
 
@@ -100,69 +109,7 @@ bool Plot::eventFilter(QObject *object, QEvent *e)
 return true;
 }
 
-
-long Plot::insertCurve(double *x_data,double *y_data,long points_count,bool rightAxis,QString label) {
-
- QwtPlotCurve *curve = new QwtPlotCurve(label);
-
-
-    curve->setTitle(label);
-    if (!rightAxis) {
-        QColor c(Qt::blue);
-        curve->setPen(c);
-        curve->setSymbol(QwtSymbol(QwtSymbol::Ellipse, c, c, QSize(5, 5)));
-
-    } else {
-    this->enableAxis(QwtPlot::yRight);
-    this->setAxisAutoScale(QwtPlot::yRight);
-    gridRight->attach(this);
-
-        QColor c(Qt::red);
-        curve->setPen(c);
-        curve->setYAxis(QwtPlot::yRight);
-        curve->setSymbol(QwtSymbol(QwtSymbol::Triangle, c, c, QSize(5, 5)));
-    }
-
-
-    //curve->setRenderHint(QwtPlotItem::RenderAntialiased);
-
-    curve->setData(x_data, y_data, points_count);
-    curve->attach(this);
-    //delete curve;
-
-    int tmpint;
-
-    tmpint=QwtPlotDict::itemList().count();
-
-    QList<QwtPlotItem*> itemList;
-    itemList=QwtPlotDict::itemList();
-
-return tmpint;
-}
-
-void Plot::insertTransitionPoints(double *x_data,double *y_data,long points_count,bool rightAxis,QString label) {
-
-
-QwtPlotCurve *curve = new QwtPlotCurve();
-
-    //curve->setTitle(label);
-        QColor c(Qt::white);
-        QColor d(Qt::black);
-        curve->setStyle(QwtPlotCurve::NoCurve);
-        curve->setSymbol(QwtSymbol(QwtSymbol::Diamond, c, d, QSize(9, 11)));
-
-        if (rightAxis) {
-        curve->setYAxis(QwtPlot::yRight);
-    }
-
-    //curve->setRenderHint(QwtPlotItem::RenderAntialiased);
-
-    curve->setData(x_data, y_data, points_count);
-    curve->attach(this);
-
-}
-
 void Plot::clear() {
     QwtPlotDict::detachItems(QwtPlotItem::Rtti_PlotCurve,true);
-
+    QwtPlotDict::detachItems(QwtPlotItem::Rtti_PlotMarker,true);
     }

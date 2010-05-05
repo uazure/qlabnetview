@@ -70,38 +70,7 @@ bool CanvasPicker::eventFilter(QObject *object, QEvent *e)
 //            move(((QMouseEvent *)e)->pos());
 //            return true;
 //        }
-//        case QEvent::KeyPress:
-//        {
-//
-//            switch(((const QKeyEvent *)e)->key())
-//            {
-//                case Qt::Key_Up:
-//                    shiftCurveCursor(true);
-//                    return true;
-//
-//                case Qt::Key_Down:
-//                    shiftCurveCursor(false);
-//                    return true;
-//
-//                case Qt::Key_Right:
-//                case Qt::Key_Plus:
-//                    if ( d_selectedCurve )
-//                        shiftPointCursor(true);
-//                    else
-//                        shiftCurveCursor(true);
-//                    return true;
-//
-//                case Qt::Key_Left:
-//                case Qt::Key_Minus:
-//                    if ( d_selectedCurve )
-//                        shiftPointCursor(false);
-//                    else
-//                        shiftCurveCursor(true);
-//                    return true;
-//                default:
-//                    break;
-//            }
-//        }
+
         default:
             break;
     }

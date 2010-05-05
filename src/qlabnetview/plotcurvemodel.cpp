@@ -54,5 +54,17 @@ void PlotCurveModel::appendCurve(PlotCurve* curve) {
 Qt::ItemFlags PlotCurveModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
              return Qt::ItemIsEnabled;
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+}
+
+bool PlotCurveModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if (!index.isValid())
+        return false;
+    if (role==Qt::EditRole) {
+        PlotCurve *curve=curveList->value(index.row());
+        curve->setName(value.toString());
+        emit dataChanged(index,index);
+        return true;
+    }
+    return false;
 }

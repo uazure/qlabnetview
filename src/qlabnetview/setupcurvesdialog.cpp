@@ -29,7 +29,7 @@ setupCurvesDialog::setupCurvesDialog(
     //! Create a new plot and attach it to window
     plot = new Plot(this);
     //set the x axis label to "t, sec"
-    ui->plotBottomAxisTitle->setText("t, sec");
+
     plot->setAxisScale(plot->yLeft,0,8,2);
     plot->setAxisScale(plot->yRight,0,760);
 
@@ -41,6 +41,7 @@ setupCurvesDialog::setupCurvesDialog(
     connect(ui->plotBottomAxisTitle,SIGNAL(textChanged(QString)),this,SLOT(setBottomTitle(QString)));
     connect(ui->plotLeftAxisTitle,SIGNAL(textChanged(QString)),this,SLOT(setLeftTitle(QString)));
     connect(ui->plotRightAxisTitle,SIGNAL(textChanged(QString)),this,SLOT(setRightTitle(QString)));
+    ui->plotBottomAxisTitle->setText("t, sec");
 
     connect(ui->addCurveButton,SIGNAL(clicked()),SLOT(addCurve()));
 
@@ -51,6 +52,8 @@ setupCurvesDialog::setupCurvesDialog(
     connect(&symbolBox,SIGNAL(currentIndexChanged(int)),SLOT(currentSymbolChanged(int)));
     connect(&colorBox,SIGNAL(currentIndexChanged(int)),SLOT(currentColorChanged(int)));
     connect(ui->widthSpinBox,SIGNAL(valueChanged(double)),SLOT(currentWidthChanged(double)));
+    connect(ui->curveLeftRadio,SIGNAL(clicked()),SLOT(currentYAxisChanged()));
+    connect(ui->curveRightRadio,SIGNAL(clicked()),SLOT(currentYAxisChanged()));
 
 
     //make lock checkbox affect the X axis selector
@@ -174,7 +177,6 @@ void setupCurvesDialog::addCurve() {
         brush.setColor(Qt::blue);
         break;
     }
-    //pen.setWidthF(0.5);
     symbol.setBrush(brush);
     curve->setSymbol(symbol);
     curve->setName(ui->curveLabel->text());
@@ -204,7 +206,7 @@ void setupCurvesDialog::currentCurveIndexChanged(QModelIndex index) {
 void setupCurvesDialog::currentSymbolChanged(int index) {
     PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
     QwtSymbol symbol(
-            symbolBox.selectedSymbol(), //current symbol
+            symbolBox.style(index), //current symbol
             QBrush(colorBox.color()),   //current color
             QPen(Qt::NoPen),                     //empty pen
             QSize(7,7));                //hard-coded size
@@ -215,7 +217,7 @@ void setupCurvesDialog::currentSymbolChanged(int index) {
 void setupCurvesDialog::currentColorChanged(int index) {
     PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
     QPen pen(curve->pen());
-    pen.setColor(colorBox.color());
+    pen.setColor(colorBox.color(index));
     curve->setPen(pen);
     QwtSymbol symbol=curve->symbol();
     symbol.setBrush(colorBox.color());
@@ -233,4 +235,45 @@ void setupCurvesDialog::currentWidthChanged(double width) {
     pen.setWidthF(width);
     curve->setPen(pen);
     plot->replot();
+}
+
+void setupCurvesDialog::currentYAxisChanged() {
+    PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
+    if (ui->curveLeftRadio->isChecked()) {
+        curve->setYAxis(QwtPlot::yLeft);
+    }
+    if (ui->curveRightRadio->isChecked()) {
+        plot->enableAxis(QwtPlot::yRight);
+        plot->setAxisAutoScale(QwtPlot::yRight);
+        curve->setYAxis(QwtPlot::yRight);
+    }
+    plot->replot();
+}
+
+void setupCurvesDialog::accept() {
+    this->hide();
+    this->setResult(QDialog::Accepted);
+    result();
+}
+
+void setupCurvesDialog::reject() {
+    this->hide();
+    for (int i=0;i<curveList.size();i++) {
+        curveList.value(i)->detach();
+        delete curveList.value(i);
+    }
+    this->setResult(QDialog::Rejected);
+    result();
+}
+
+QList<PlotCurve *> setupCurvesDialog::getCurveList() {
+    return curveList;
+}
+
+QwtText setupCurvesDialog::plotAxisTitle(int axis) const {
+    return plot->axisTitle(axis);
+}
+
+bool setupCurvesDialog::plotAxisEnabled(int axis) const {
+    return plot->axisEnabled(axis);
 }

@@ -75,10 +75,7 @@ private:
     double multiplier;
 
 public slots:
-    /*!
-      Updates the plot data to the actual data in GpibData
-      */
-    void update (void);
+
     /*!
       Sets the title of the curve. It is displayed in plot legend
       \sa getName

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*!
   \brief this is the class containing a 2-dimension dynamic array of double and providing model for tableview
 
-  The 2d dynamic array is stored as QList<QList<double> >. array.at(0) - is the pointer to the first _column_ of data (time in h:mm:ss format)
+  The 2d dynamic array is stored as QVector<QVector<double> >. array.at(0) - is the pointer to the first _column_ of data (time in h:mm:ss format)
   This class provides a model interface, so data can be easily represented as table
   Every column can be easily accessed, this is very useful for realtime update of QwtPlot widget w/o deleting/adding new curves.
 

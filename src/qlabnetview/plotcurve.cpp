@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QObject>
 
-PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *gpibData)
+PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *gpibData=0)
 {
     this->multiplier=1.;
     if (gpibData)
@@ -79,12 +79,11 @@ int PlotCurve::getYColumn(void) {
 
 void PlotCurve::setName(QString name) {
     this->name=name;
+    this->setTitle(name);
 }
 
 QString PlotCurve::getName(void) const {
     return this->name;
 }
 
-void PlotCurve::update() {
-    this->setRawData(gpibData->getColumnData(xColumn),gpibData->getColumnData(yColumn),gpibData->rowCount());
-}
+

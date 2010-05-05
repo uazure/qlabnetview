@@ -24,7 +24,9 @@ class setupCurvesDialog : public QDialog {
     Q_OBJECT
 public:
     setupCurvesDialog(QStringList head, GpibData *pdata, int mode=MainWindow::modeFile);
-
+    QList<PlotCurve *> getCurveList();
+    QwtText plotAxisTitle(int axis) const;
+    bool plotAxisEnabled(int axis) const;
     ~setupCurvesDialog();
 
 protected:
@@ -44,6 +46,8 @@ private:
 
 
 private slots:
+    void accept();
+    void reject();
     void addCurve();
     void setBottomTitle(QString title);
     void setLeftTitle(QString title);
@@ -54,6 +58,7 @@ public slots:
     void currentSymbolChanged (int index);
     void currentColorChanged (int index);
     void currentWidthChanged (double width);
+    void currentYAxisChanged (void);
 
 };
 
