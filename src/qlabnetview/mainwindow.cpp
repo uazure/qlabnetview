@@ -96,6 +96,8 @@ MainWindow::~MainWindow()
     delete plot;
     delete ui;
     delete pdata;
+    delete gpibQueryInterval;
+
 }
 
 
@@ -184,21 +186,43 @@ bool MainWindow::setupCurves(QStringList head, int mode) {
 }
 void MainWindow::setupCurves(GpibData *data) {
     setupCurvesDialog dialog(data,this->curveList);
+    //    setupCurvesDialog *pdialog = new setupCurvesDialog(data,curveList);
     dialog.exec();
+    //    pdialog->exec();
     if (dialog.result()==QDialog::Accepted) {
         plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
         plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
         plot->setAxisTitle(QwtPlot::yRight,dialog.plotAxisTitle(QwtPlot::yRight));
         plot->setAxisTitle(QwtPlot::xBottom,dialog.plotAxisTitle(QwtPlot::xBottom));
-        this->curveList=dialog.getCurveList();
-        PlotCurve *curve;
-        for (int i=0;i<curveList.size();i++) {
-            curve=curveList.value(i);
-            curve->attach(plot);
-            curve->setGpibData(pdata);
-        }
-        this->updatePlotCurves();
     }
+    //regardless of the result returnd we should reassign PlotCurves back to
+    //mainwindows plot
+    this->curveList=dialog.getCurveList();
+    PlotCurve *curve;
+    for (int i=0;i<curveList.size();i++) {
+        curve=curveList.value(i);
+        curve->attach(plot);
+        curve->setGpibData(pdata);
+    }
+    //this->updatePlotCurves();
+
+
+    //    if (pdialog->result()==QDialog::Accepted) {
+    //        plot->enableAxis(QwtPlot::yRight,pdialog->plotAxisEnabled(QwtPlot::yRight));
+    //        plot->setAxisTitle(QwtPlot::yLeft,pdialog->plotAxisTitle(QwtPlot::yLeft));
+    //        plot->setAxisTitle(QwtPlot::yRight,pdialog->plotAxisTitle(QwtPlot::yRight));
+    //        plot->setAxisTitle(QwtPlot::xBottom,pdialog->plotAxisTitle(QwtPlot::xBottom));
+    //        this->curveList=pdialog->getCurveList();
+    //
+    //        PlotCurve *curve;
+    //        for (int i=0;i<curveList.size();i++) {
+    //            curve=curveList.value(i);
+    //            curve->attach(plot);
+    //            curve->setGpibData(pdata);
+    //        }
+    //        delete pdialog;
+    //this->updatePlotCurves();
+    //}
 }
 
 void MainWindow::fileOpen(QString filename) {

@@ -36,14 +36,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Plot::~Plot() {
 delete panner;
 delete magnifier;
+delete picker;
+delete grid;
+delete gridRight;
+delete legend;
+delete canvasPicker;
+delete dict;
 }
 
 Plot::Plot(QWidget *parent):
         QwtPlot(parent)
 {
-    (void) new CanvasPicker(this);
+    this->canvasPicker=new CanvasPicker(this);
     setAutoReplot(false);
-    QwtPlotDict *dict=new QwtPlotDict();
+    dict=new QwtPlotDict();
     dict->setAutoDelete(true);
     QSizePolicy policy;
     policy.setHorizontalPolicy(policy.MinimumExpanding);

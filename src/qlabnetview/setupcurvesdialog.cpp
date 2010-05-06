@@ -280,10 +280,10 @@ void setupCurvesDialog::accept() {
 
 void setupCurvesDialog::reject() {
     this->hide();
-    for (int i=0;i<curveList.size();i++) {
-        curveList.value(i)->detach();
-        delete curveList.value(i);
-    }
+//    for (int i=0;i<curveList.size();i++) {
+//        curveList.value(i)->detach();
+//        delete curveList.value(i);
+//    }
     this->setResult(QDialog::Rejected);
     result();
 }

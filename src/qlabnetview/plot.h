@@ -27,6 +27,7 @@ class QwtPlotMagnifier;
 class QwtLegend;
 class QwtPlotPicker;
 class QwtPlotMarker;
+class CanvasPicker;
 
 class Plot : public QwtPlot
 {
@@ -40,6 +41,7 @@ public:
     Zoomer *zoomerRight;
     QwtPlotPanner *panner;
     QwtPlotPicker *picker;
+    CanvasPicker *canvasPicker;
     QwtPlotMagnifier *magnifier;
     QwtLegend *legend;
     QwtPlotGrid *grid, *gridRight;
@@ -47,6 +49,9 @@ public:
 
 public slots:
     void clear();
+
+private:
+    QwtPlotDict *dict;
 };
 
 

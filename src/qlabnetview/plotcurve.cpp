@@ -23,10 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *dataStore)
 {
     this->multiplier=1.;
-    if (gpibData)
+    if (dataStore)
         this->gpibData=dataStore;
     else {
-        qCritical()<<"gpibData of GpibData does not exist";
+        qCritical()<<"PlotCurve says: gpibData of does not exist!";
         return;
 }
     if (xColumnId>=0 && xColumnId<gpibData->columnCount())
