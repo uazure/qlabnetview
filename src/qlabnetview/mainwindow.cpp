@@ -524,10 +524,47 @@ void MainWindow::updatePlotCurves() {
     PlotCurve *curve;
     for (int i=0;i<curveList.size();i++) {
         curve=curveList.value(i);
-        curve->setRawData(
+        if (!curve->getLinked()) {
+                curve->setRawData(
                 pdata->getColumnData(curve->getXColumn()),
                 pdata->getColumnData(curve->getYColumn()),
                 pdata->rowCount()
                           );
+            }
+        else {
+            tmpDoubleVector.clear();
+            double a,b;
+            for (int j=0;j<pdata->rowCount();j++) {
+                a=pdata->data(pdata->index(j,curve->getYColumn()),Qt::DisplayRole).toDouble();
+                b=pdata->data(pdata->index(j,curve->getYColumn()+1),Qt::DisplayRole).toDouble()*100;
+                tmpDoubleVector.append(crossAverage(a,b,9,10));
+                curve->setData(pdata->getColumnData(curve->getXColumn()),
+                               tmpDoubleVector.data(),
+                               pdata->rowCount());
+            }
+
+
+            //FIXME: here must be some actions to produce a data sequence for linked data.
+        }
+}
+}
+
+double MainWindow::crossAverage(double a, double b, double start, double end) {
+    double value,interval,weight;
+    interval=end-start;
+
+    if (a<=start)
+    {
+        return a;
+    } else if (b>=end)
+    {
+        return b;
+    } else {
+        weight=(a-start)/interval;
+        value=b*weight+a*(1-weight);
+        qDebug()<<"Crossing a ="<<a<<"and b ="<<b<<"weight is"<<weight
+                <<", result is"<<value;
     }
+
+    return value;
 }

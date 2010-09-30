@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 PlotCurve::PlotCurve(int xColumnId, int yColumnId, GpibData *dataStore)
 {
     this->multiplier=1.;
+    this->isLinked=false;
     if (dataStore)
         this->gpibData=dataStore;
     else {
@@ -92,4 +93,10 @@ void PlotCurve::setGpibData(GpibData *dataStore) {
     } else qCritical()<<"setGpibData: dataStore is invalid";
 }
 
+void PlotCurve::setLinked(bool linked) {
+    this->isLinked=linked;
+}
 
+bool PlotCurve::getLinked(void) const {
+    return this->isLinked;
+}

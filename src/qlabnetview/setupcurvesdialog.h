@@ -52,6 +52,7 @@ private slots:
     void setBottomTitle(QString title);
     void setLeftTitle(QString title);
     void setRightTitle(QString title);
+    void currentColumnIndexChanged(int index);
 
 public slots:
     void currentCurveIndexChanged(QModelIndex index);
@@ -59,6 +60,7 @@ public slots:
     void currentColorChanged (int index);
     void currentWidthChanged (double width);
     void currentYAxisChanged (void);
+    void currentLinkChanged (bool link);
 
 };
 

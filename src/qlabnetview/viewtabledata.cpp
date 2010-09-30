@@ -28,6 +28,8 @@ viewTableData::viewTableData(MainWindow *parent) :
     ui->tableView->verticalHeader()->setDefaultSectionSize(QFontMetrics(this->font()).height()+2);
     ui->tableView->verticalHeader()->setMinimumSectionSize(QFontMetrics(this->font()).height());
     ui->tableView->setModel(model);
+
+    //ui->tableView->installEventFilter();
 }
 
 viewTableData::~viewTableData()

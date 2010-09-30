@@ -326,6 +326,22 @@
            <layout class="QHBoxLayout" name="SymbolBoxLayout"/>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="linkCheckboxLayout">
+            <item>
+             <widget class="QCheckBox" name="linkCheckBox">
+              <property name="toolTip">
+               <string>If this checkbox is checked, then current column and the next one will be treated as pressure from two baratrons.
+Current column: 1 = 1 Torr
+Next column: 1 = 0.01 Torr</string>
+              </property>
+              <property name="text">
+               <string>Link</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -429,8 +445,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>266</x>
-     <y>590</y>
+     <x>275</x>
+     <y>645</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -445,8 +461,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>334</x>
-     <y>590</y>
+     <x>343</x>
+     <y>645</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

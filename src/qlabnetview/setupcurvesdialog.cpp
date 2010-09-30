@@ -26,6 +26,7 @@ setupCurvesDialog::setupCurvesDialog(QStringList head, int mode) :
     }
     //scroll the widget to beginning
     ui->plainTextEdit->scroll(0,-1024);
+    connect(ui->curveColumComboBox,SIGNAL(currentIndexChanged(int)),SLOT(currentColumnIndexChanged(int)));
 
 }
 
@@ -76,6 +77,7 @@ void setupCurvesDialog::init() {
     connect(ui->widthSpinBox,SIGNAL(valueChanged(double)),SLOT(currentWidthChanged(double)));
     connect(ui->curveLeftRadio,SIGNAL(clicked()),SLOT(currentYAxisChanged()));
     connect(ui->curveRightRadio,SIGNAL(clicked()),SLOT(currentYAxisChanged()));
+    connect(ui->linkCheckBox,SIGNAL(clicked(bool)),SLOT(currentLinkChanged(bool)));
 
 
     //make lock checkbox affect the X axis selector
@@ -217,6 +219,7 @@ void setupCurvesDialog::currentCurveIndexChanged(QModelIndex index) {
     ui->widthSpinBox->setValue(curve->pen().widthF());
     ui->widthSpinBox->blockSignals(false);
     symbolBox.setCurrentIndex(symbolBox.symbolIndex(curve->symbol().style()));
+    ui->linkCheckBox->setChecked(curve->getLinked());
 
     if (curve->yAxis()==QwtPlot::yLeft) {
         ui->curveLeftRadio->setChecked(true);
@@ -245,6 +248,12 @@ void setupCurvesDialog::currentColorChanged(int index) {
     symbol.setBrush(colorBox.color());
     curve->setSymbol(symbol);
     plot->replot();
+}
+
+void setupCurvesDialog::currentLinkChanged(bool link) {
+    if (ui->listView->currentIndex().row()>=curveList.size()) return;
+    PlotCurve *curve =  curveList[ui->listView->currentIndex().row()];
+    curve->setLinked(link);
 }
 
 void setupCurvesDialog::currentWidthChanged(double width) {
@@ -303,4 +312,8 @@ QwtText setupCurvesDialog::plotAxisTitle(int axis) const {
 
 bool setupCurvesDialog::plotAxisEnabled(int axis) const {
     return plot->axisEnabled(axis);
+}
+
+void setupCurvesDialog::currentColumnIndexChanged(int index) {
+
 }

@@ -39,6 +39,7 @@ protected:
 private:
     Ui::viewTableData *ui;
     GpibData *model;
+
 };
 
 #endif // VIEWTABLEDATA_H

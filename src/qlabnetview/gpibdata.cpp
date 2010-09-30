@@ -44,14 +44,19 @@ GpibData::~GpibData() {
 }
 
 int GpibData::timeToSeconds(QTime time) {
+    qDebug()<<"time:"<<time;
     if (this->initialTime.isNull()) {
         this->initialTime=time;
         return 0;
+        qDebug()<<"initial time:"<<this->initialTime;
     } else {
         qint32 diff=this->initialTime.secsTo(time)+this->daydiff*86400;
-        if (diff<0) {
+        qDebug()<<"daydiff:"<<this->daydiff;
+        qDebug()<<"diff:"<<diff<<"seconds";
+        if (diff<this->daydiff*86400) {
             this->daydiff++;
             diff=initialTime.secsTo(time)+this->daydiff*86400;
+            qDebug()<<"daydiff appended:"<<daydiff;
         }
         return diff;
     }

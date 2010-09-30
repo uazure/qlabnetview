@@ -99,6 +99,8 @@ private:
     QTimer *gpibQueryInterval;
     experimentControl *experimentControlDialog;
     QList<PlotCurve*> curveList;
+    QVector<double> tmpDoubleVector;
+    double crossAverage(double a,double b,double start,double end);
 
 
 private slots:   

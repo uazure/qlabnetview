@@ -46,14 +46,16 @@ public:
       sets the index of the column assosiated with the Y
       */
     void setYColumn(int columnId);
+
+    void setGpibData (GpibData *dataStore);
+
     /*!
       returns the title (name) of the curve
 
       \sa setName
       */
-    void setGpibData (GpibData *dataStore);
-
     QString getName(void) const;
+    bool getLinked(void) const;
 
 
 private:
@@ -75,6 +77,10 @@ private:
       than just referencing to GpibData values.
       */
     double multiplier;
+    /*!
+      This is the marker that shows that this curve
+      */
+    bool isLinked;
 
 public slots:
 
@@ -83,6 +89,7 @@ public slots:
       \sa getName
       */
     void setName(QString name);
+    void setLinked(bool linked);
 };
 
 #endif // PLOTCURVE_H
