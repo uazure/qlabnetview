@@ -250,10 +250,11 @@ void MainWindow::fileOpen(QString filename) {
         if (this->setupCurves(head,modeFile)) {
             this->currentFileName=filename;
             this->setDataSourceMode(modeFile);
+            this->fileToData();
+            this->updatePlotCurves();
+            plot->replot();
         }
-        this->fileToData();
-        this->updatePlotCurves();
-        plot->replot();
+
     } else {
         fileOpen();
     }
@@ -525,28 +526,28 @@ void MainWindow::updatePlotCurves() {
     for (int i=0;i<curveList.size();i++) {
         curve=curveList.value(i);
         if (!curve->getLinked()) {
-                curve->setRawData(
-                pdata->getColumnData(curve->getXColumn()),
-                pdata->getColumnData(curve->getYColumn()),
-                pdata->rowCount()
-                          );
-            }
+            curve->setRawData(
+                    pdata->getColumnData(curve->getXColumn()),
+                    pdata->getColumnData(curve->getYColumn()),
+                    pdata->rowCount()
+                    );
+        }
         else {
-            tmpDoubleVector.clear();
-            double a,b;
-            for (int j=0;j<pdata->rowCount();j++) {
-                a=pdata->data(pdata->index(j,curve->getYColumn()),Qt::DisplayRole).toDouble();
-                b=pdata->data(pdata->index(j,curve->getYColumn()+1),Qt::DisplayRole).toDouble()*100;
-                tmpDoubleVector.append(crossAverage(a,b,9,10));
+            if (tmpDoubleVector.size()<pdata->rowCount()) {
+
+                double a,b;
+                for (int j=tmpDoubleVector.size();j<pdata->rowCount();j++) {
+                    a=pdata->data(pdata->index(j,curve->getYColumn()),Qt::DisplayRole).toDouble();
+                    b=pdata->data(pdata->index(j,curve->getYColumn()+1),Qt::DisplayRole).toDouble()*100;
+                    tmpDoubleVector.append(crossAverage(a,b,9,10));
+                }
                 curve->setData(pdata->getColumnData(curve->getXColumn()),
                                tmpDoubleVector.data(),
-                               pdata->rowCount());
+                               tmpDoubleVector.size());
+
             }
-
-
-            //FIXME: here must be some actions to produce a data sequence for linked data.
         }
-}
+    }
 }
 
 double MainWindow::crossAverage(double a, double b, double start, double end) {
@@ -556,9 +557,13 @@ double MainWindow::crossAverage(double a, double b, double start, double end) {
     if (a<=start)
     {
         return a;
-    } else if (b>=end)
+    } else if (b>=end && a>=end)
     {
         return b;
+    } else if ((a>=end && b<end) || (a<end && b>=end))
+    {
+        value=(a+b)/2;
+        return value;
     } else {
         weight=(a-start)/interval;
         value=b*weight+a*(1-weight);
