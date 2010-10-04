@@ -48,6 +48,8 @@ public:
     int serviceInfoHeLevelColumn; //this int contains column in data source containing the He level values
     int serviceInfoHeaterPowerColumn; //this int contains column in data source containing the heater power level values
 
+    double getLastValue(int columnId) const;
+
 
 
     QRegExp delimiterRegExp;

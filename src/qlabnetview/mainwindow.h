@@ -101,6 +101,7 @@ private:
     QList<PlotCurve*> curveList;
     QVector<double> tmpDoubleVector;
     double crossAverage(double a,double b,double start,double end);
+    int monitorPointsCount;
 
 
 private slots:   
@@ -127,7 +128,7 @@ private slots:
     void setNumTransitionPoints(int num);
     void zoomAll();
     void zoom(bool on);
-
+    void setMonitorPoints (int);
 
 signals:
 

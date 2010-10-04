@@ -264,3 +264,7 @@ const double* GpibData::getColumnData(int columnId) const {
 const QStringList GpibData::getMeasureData(void) const {
     return this->measureData;
 }
+
+double GpibData::getLastValue(int columnId) const {
+    return this->ddata.at(columnId).value(this->rowCount()-1);
+}

@@ -78,6 +78,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gpib,SIGNAL(serverIdleRunning(bool)),ui->startStopButton,SLOT(setChecked(bool)));
     connect(ui->zoomAllButton,SIGNAL(clicked()),this,SLOT(zoomAll()));
     connect(ui->zoomButton,SIGNAL(toggled(bool)),SLOT(zoom(bool)));
+    connect(ui->monitorPointCountSpinBox,SIGNAL(valueChanged(int)),SLOT(setMonitorPoints(int)));
+
+    //this connects rx and tx counters to signals from gpib socket
+    connect(gpib,SIGNAL(serverRxBytes(quint32)),SLOT(updateRxBytes(quint32)));
+    connect(gpib,SIGNAL(serverTxBytes(quint32)),SLOT(updateTxBytes(quint32)));
+    connect(gpib,SIGNAL(serverRtt(int)),SLOT(updateRtt(int)));
 
 
 
@@ -364,7 +370,24 @@ void MainWindow::updateCurrentData(QStringList data,QString from) {
     if ((from=="0" && pdata->rowCount()==0) || from==pdata->getLatestTimestamp()) {
         pdata->appendAsciiData(data);
         this->updatePlotCurves();
-        plot->replot();
+        ui->numPointsLabel->setText(QString::number(pdata->rowCount()));
+        if (ui->monitorOnOffCheckBox->isChecked()) {
+            int rows=pdata->rowCount();
+            int start=rows-1-monitorPointsCount;
+            int end=rows-1;
+            /*
+              this is well-performance technique for drawing new points of the curve
+              without replotting all the plot.
+            for (int i=0;i<curveList.size();i++) {
+                curveList.at(i)->draw(start,end);
+            }
+            */
+            double max=curveList.first()->maxXValue()+30;
+            double min=max-double(ui->monitorPointCountSpinBox->value());
+            plot->setAxisScale(QwtPlot::xBottom,min,max);
+            plot->replot();
+        }
+        else plot->replot();
     }
 }
 
@@ -375,7 +398,6 @@ void MainWindow::setDataSourceMode (int mode) {
         ui->networkGroupBox->setEnabled(false);
         ui->startStopButton->setChecked(false);
         ui->actionExperiment_control->setEnabled(false);
-
         break;
     case modeNetwork:
         if (QHostAddress(gpib->getServerAddress()).isNull()) {
@@ -572,4 +594,8 @@ double MainWindow::crossAverage(double a, double b, double start, double end) {
     }
 
     return value;
+}
+
+void MainWindow::setMonitorPoints(int count) {
+    this->monitorPointsCount=count;
 }
