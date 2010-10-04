@@ -47,6 +47,7 @@ delete dict;
 Plot::Plot(QWidget *parent):
         QwtPlot(parent)
 {
+    this->canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
     this->canvasPicker=new CanvasPicker(this);
     setAutoReplot(false);
     dict=new QwtPlotDict();

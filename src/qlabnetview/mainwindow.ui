@@ -17,6 +17,10 @@
    <iconset resource="../../icons.qrc">
     <normaloff>:/icons/logo</normaloff>:/icons/logo</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">body {margin:0px;}
+</string>
+  </property>
   <property name="animated">
    <bool>false</bool>
   </property>
@@ -396,6 +400,13 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="latestLabel">
+        <property name="text">
+         <string/>
+        </property>
        </widget>
       </item>
       <item>

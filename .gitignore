@@ -4,6 +4,7 @@ moc_*.cpp
 ui_*.h
 qrc_*.cpp
 *.pro.user
+*.sh
 src/qlabnetview/*.pro.user
 src/qlabnetfake/*.pro.user
 src/monitor/*.pro.user

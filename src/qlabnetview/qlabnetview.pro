@@ -85,3 +85,4 @@ win32:target.path = $$INSTALLBASE
 
 # DEFINES = D_MYDEFINE
 OTHER_FILES += todo.txt
+QMAKE_POST_LINK = ./counter.sh > build.h

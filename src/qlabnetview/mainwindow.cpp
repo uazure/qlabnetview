@@ -373,10 +373,11 @@ void MainWindow::updateCurrentData(QStringList data,QString from) {
         ui->numPointsLabel->setText(QString::number(pdata->rowCount()));
         if (ui->monitorOnOffCheckBox->isChecked()) {
             int rows=pdata->rowCount();
+            /*
             int start=rows-1-monitorPointsCount;
             int end=rows-1;
-            /*
-              this is well-performance technique for drawing new points of the curve
+            */
+            /*this is well-performance technique for drawing new points of the curve
               without replotting all the plot.
             for (int i=0;i<curveList.size();i++) {
                 curveList.at(i)->draw(start,end);
