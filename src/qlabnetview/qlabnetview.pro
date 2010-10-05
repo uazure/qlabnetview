@@ -45,8 +45,7 @@ HEADERS += mainwindow.h \
     plotcurvemodel.h \
     PenStyleBox.h \
     ColorBox.h \
-    SymbolBox.h \
-    build.h
+    SymbolBox.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \
@@ -86,4 +85,4 @@ win32:target.path = $$INSTALLBASE
 
 # DEFINES = D_MYDEFINE
 OTHER_FILES += todo.txt
-QMAKE_POST_LINK = ./counter.sh > build.h
+#QMAKE_POST_LINK = ./counter.sh > build.h

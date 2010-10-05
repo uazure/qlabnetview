@@ -19,6 +19,7 @@
 #include <QList>
 #include <QAction>
 #include <QTimer>
+#include <QClipboard>
 #include "plotcurve.h"
 #include "qwt_legend.h"
 
@@ -605,4 +606,6 @@ void MainWindow::setMonitorPoints(int count) {
 void MainWindow::pointSelected(double x, double y) {
     ui->selectedValueLabel->setText(QString::number(y));
     ui->selectedValueLabel->setToolTip(QString::number(x));
+    QClipboard *clipboard=QApplication::clipboard();
+    clipboard->setText(QString::number(y));
 }

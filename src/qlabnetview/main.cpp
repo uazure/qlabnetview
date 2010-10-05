@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mainwindow.h"
 #include "gpibdata.h"
 #include <QFile>
-#include "build.h"
 
 
 
@@ -29,7 +28,6 @@ int main(int argc, char *argv[])
 
     a.setApplicationName("qlabnetview");
     QString tmp="0.0.1 pre-alpha ";
-    tmp.append(GIT_REVISION);
     a.setApplicationVersion(tmp);
     a.setOrganizationName("qlabnetview");
     QSettings::setDefaultFormat(QSettings::IniFormat);
