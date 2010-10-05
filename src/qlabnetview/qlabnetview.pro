@@ -45,7 +45,8 @@ HEADERS += mainwindow.h \
     plotcurvemodel.h \
     PenStyleBox.h \
     ColorBox.h \
-    SymbolBox.h
+    SymbolBox.h \
+    build.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \

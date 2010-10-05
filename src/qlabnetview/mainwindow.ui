@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../icons.qrc">
+   <iconset>
     <normaloff>:/icons/logo</normaloff>:/icons/logo</iconset>
   </property>
   <property name="styleSheet">
@@ -112,7 +112,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset>
                <normaloff>:/icons/refresh</normaloff>:/icons/refresh</iconset>
              </property>
              <property name="iconSize">
@@ -182,7 +182,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset>
                <normaloff>:/icons/refresh</normaloff>:/icons/refresh</iconset>
              </property>
              <property name="iconSize">
@@ -410,6 +410,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="selectedValueLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -550,7 +557,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
    </property>
    <property name="text">
@@ -559,7 +566,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/save</normaloff>:/icons/save</iconset>
    </property>
    <property name="text">
@@ -568,7 +575,7 @@
   </action>
   <action name="actionSave_as">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/saveas</normaloff>:/icons/saveas</iconset>
    </property>
    <property name="text">
@@ -582,7 +589,7 @@
   </action>
   <action name="actionBrowse_network">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/internet</normaloff>:/icons/internet</iconset>
    </property>
    <property name="text">
@@ -599,7 +606,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/experiment</normaloff>:/icons/experiment</iconset>
    </property>
    <property name="text">
@@ -623,7 +630,7 @@
   </action>
   <action name="actionOpen_recent">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset>
      <normaloff>:/icons/open</normaloff>:/icons/open</iconset>
    </property>
    <property name="text">
@@ -640,8 +647,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="../../icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

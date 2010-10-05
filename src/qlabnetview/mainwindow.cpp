@@ -87,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+
 this->delimiter=" ";
 this->delimiterRegExp.setPattern("[\\ \\t]{1,9}"); //space (\\ ) or tab (\\t) {from 1 up to 9 in a row}
 this->daydiff=0;
@@ -599,4 +600,9 @@ double MainWindow::crossAverage(double a, double b, double start, double end) {
 
 void MainWindow::setMonitorPoints(int count) {
     this->monitorPointsCount=count;
+}
+
+void MainWindow::pointSelected(double x, double y) {
+    ui->selectedValueLabel->setText(QString::number(y));
+    ui->selectedValueLabel->setToolTip(QString::number(x));
 }

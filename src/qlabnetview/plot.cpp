@@ -49,6 +49,7 @@ Plot::Plot(QWidget *parent):
 {
     this->canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
     this->canvasPicker=new CanvasPicker(this);
+    connect(canvasPicker, SIGNAL(pointSelected(double,double)),parent,SLOT(pointSelected(double,double)));
     setAutoReplot(false);
     dict=new QwtPlotDict();
     dict->setAutoDelete(true);

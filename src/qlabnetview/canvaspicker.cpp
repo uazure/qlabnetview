@@ -104,6 +104,7 @@ void CanvasPicker::select(const QPoint &pos)
             } 
         }
     }
+    emit pointSelected(curve->x(index),curve->y(index));
 
     showCursor(false);
     d_selectedCurve = NULL;

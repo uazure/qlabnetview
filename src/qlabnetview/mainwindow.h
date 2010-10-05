@@ -129,6 +129,7 @@ private slots:
     void zoomAll();
     void zoom(bool on);
     void setMonitorPoints (int);
+    void pointSelected(double x, double y);
 
 signals:
 

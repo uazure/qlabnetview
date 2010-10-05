@@ -14,6 +14,9 @@ public:
 
     virtual bool event(QEvent *);
 
+signals:
+    void pointSelected(double x, double y);
+
 private:
     void select(const QPoint &);
     void move(const QPoint &);
