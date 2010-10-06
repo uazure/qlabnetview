@@ -548,6 +548,7 @@ void MainWindow::updateHeaterPower() {
 
 void MainWindow::updatePlotCurves() {
     PlotCurve *curve;
+    QString lastValue;
     for (int i=0;i<curveList.size();i++) {
         curve=curveList.value(i);
         if (!curve->getLinked()) {
@@ -569,10 +570,13 @@ void MainWindow::updatePlotCurves() {
                 curve->setData(pdata->getColumnData(curve->getXColumn()),
                                tmpDoubleVector.data(),
                                tmpDoubleVector.size());
-
             }
         }
+        //updating last values on main window
+        lastValue+=(QString::number(curve->y(curve->dataSize()-1))+"\n");
     }
+    this->updateLastValues(lastValue.trimmed());
+
 }
 
 double MainWindow::crossAverage(double a, double b, double start, double end) {
@@ -608,4 +612,12 @@ void MainWindow::pointSelected(double x, double y) {
     ui->selectedValueLabel->setToolTip(QString::number(x));
     QClipboard *clipboard=QApplication::clipboard();
     clipboard->setText(QString::number(y));
+}
+
+void MainWindow::updateLastValues(QString value) {
+    ui->lastValueLabel->setText(value);
+}
+
+void MainWindow::showLastValuesDialog() {
+
 }

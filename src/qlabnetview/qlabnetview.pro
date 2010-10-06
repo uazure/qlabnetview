@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     plotcurvemodel.cpp \
     PenStyleBox.cpp \
     ColorBox.cpp \
-    SymbolBox.cpp
+    SymbolBox.cpp \
+    ../lastvaluesdialog.cpp
 HEADERS += mainwindow.h \
     about.h \
     plot.h \
@@ -45,7 +46,8 @@ HEADERS += mainwindow.h \
     plotcurvemodel.h \
     PenStyleBox.h \
     ColorBox.h \
-    SymbolBox.h
+    SymbolBox.h \
+    ../lastvaluesdialog.h
 FORMS += mainwindow.ui \
     about.ui \
     networkDialog.ui \
@@ -55,9 +57,10 @@ FORMS += mainwindow.ui \
     viewrawdata.ui \
     viewparseddata.ui \
     viewtabledata.ui \
-    setupcurvesdialog.ui
+    setupcurvesdialog.ui \
+    ../lastvaluesdialog.ui
 
-#QWT_NAME = qwt5
+# QWT_NAME = qwt5
 QWT_NAME = qwt
 unix { 
     LIBS += -l$$QWT_NAME
@@ -85,4 +88,3 @@ win32:target.path = $$INSTALLBASE
 
 # DEFINES = D_MYDEFINE
 OTHER_FILES += todo.txt
-#QMAKE_POST_LINK = ./counter.sh > build.h

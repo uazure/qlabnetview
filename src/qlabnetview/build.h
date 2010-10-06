@@ -1,0 +1,2 @@
+#define GIT_REVISION 34
+#define BUILD_DATE 20101005

@@ -130,6 +130,8 @@ private slots:
     void zoom(bool on);
     void setMonitorPoints (int);
     void pointSelected(double x, double y);
+    void updateLastValues(QString value);
+    void showLastValuesDialog(void);
 
 signals:
 
