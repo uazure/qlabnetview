@@ -150,7 +150,7 @@ qint32 MainWindow::timediff(QTime from, QTime to) {
 void MainWindow::fileToData() {
 
     pdata->reset();
-    QFile inFile(this->currentFileName);
+    QFile inFile(this->inName);
     inFile.open(QIODevice::ReadOnly);
     QByteArray fileData,tmp; //temp data arrays
     QString tmpstring="",str="",nextline="";
@@ -194,9 +194,7 @@ bool MainWindow::setupCurves(QStringList head, int mode) {
 }
 void MainWindow::setupCurves(GpibData *data) {
     setupCurvesDialog dialog(data,this->curveList);
-    //    setupCurvesDialog *pdialog = new setupCurvesDialog(data,curveList);
     dialog.exec();
-    //    pdialog->exec();
     if (dialog.result()==QDialog::Accepted) {
         plot->enableAxis(QwtPlot::yRight,dialog.plotAxisEnabled(QwtPlot::yRight));
         plot->setAxisTitle(QwtPlot::yLeft,dialog.plotAxisTitle(QwtPlot::yLeft));
@@ -212,25 +210,6 @@ void MainWindow::setupCurves(GpibData *data) {
         curve->attach(plot);
         curve->setGpibData(pdata);
     }
-    //this->updatePlotCurves();
-
-
-    //    if (pdialog->result()==QDialog::Accepted) {
-    //        plot->enableAxis(QwtPlot::yRight,pdialog->plotAxisEnabled(QwtPlot::yRight));
-    //        plot->setAxisTitle(QwtPlot::yLeft,pdialog->plotAxisTitle(QwtPlot::yLeft));
-    //        plot->setAxisTitle(QwtPlot::yRight,pdialog->plotAxisTitle(QwtPlot::yRight));
-    //        plot->setAxisTitle(QwtPlot::xBottom,pdialog->plotAxisTitle(QwtPlot::xBottom));
-    //        this->curveList=pdialog->getCurveList();
-    //
-    //        PlotCurve *curve;
-    //        for (int i=0;i<curveList.size();i++) {
-    //            curve=curveList.value(i);
-    //            curve->attach(plot);
-    //            curve->setGpibData(pdata);
-    //        }
-    //        delete pdialog;
-    //this->updatePlotCurves();
-    //}
 }
 
 void MainWindow::fileOpen(QString filename) {
@@ -238,7 +217,7 @@ void MainWindow::fileOpen(QString filename) {
     QFile file(filename);
     if (file.exists()) {
         if (!file.open(QFile::ReadOnly)) {
-            this->showErrorMessageDialog("Error opening file \""+this->currentFileName+"\"");
+            this->showErrorMessageDialog("Error opening file \""+this->inName+"\"");
             qWarning()<<"Error opening file"<<filename;
             return;}
 
@@ -256,7 +235,7 @@ void MainWindow::fileOpen(QString filename) {
         }
         file.close();
         if (this->setupCurves(head,modeFile)) {
-            this->currentFileName=filename;
+            this->inName=filename;
             this->setDataSourceMode(modeFile);
             this->fileToData();
             this->updatePlotCurves();
@@ -272,16 +251,21 @@ void MainWindow::fileOpen() {
     QFileDialog *dialog=new QFileDialog();
     dialog->selectFile(this->settings.value("recentFile","").toString());
     QString filename=dialog->getOpenFileName(this,
-        tr("Open data file"), this->settings.value("recentDir",QDir::rootPath()).toString(),tr("Data files (*.dat *.txt)"));
-    delete dialog;
-    if (filename.isEmpty()) {
+                                             tr("Open data file"), this->settings.value("recentDir",QDir::rootPath()).toString(),tr("Data files (*.dat *.txt)"));
+    if (dialog->result()==QDialog::Rejected) {
+        delete dialog;
         return;
-    }
+    } else {
 
-    QString dirname=filename.left(filename.lastIndexOf("/")+1);
-    this->settings.setValue("recentFile", filename);
-    this->settings.setValue("recentDir",dirname);
-    this->fileOpen(filename);
+        delete dialog;
+        if (filename.isEmpty()) {
+            return;
+        }
+        QString dirname=filename.left(filename.lastIndexOf("/")+1);
+        this->settings.setValue("recentFile", filename);
+        this->settings.setValue("recentDir",dirname);
+        this->fileOpen(filename);
+    }
 }
 
 void MainWindow::fileOpenRecent() {
@@ -291,13 +275,13 @@ void MainWindow::fileOpenRecent() {
 }
 
 void MainWindow::fileSave() {
-    if (this->currentFileName.isNull() or this->currentFileName.isEmpty()) {
+    if (this->inName.isNull() or this->inName.isEmpty()) {
         this->fileSaveAs();
     }
 }
 
 void MainWindow::fileSaveAs() {
-    this->currentFileName=QFileDialog::getSaveFileName(this,
+    this->inName=QFileDialog::getSaveFileName(this,
     tr("Open data file"), this->settings.value("recentDir",QDir::rootPath()).toString(),tr("Data files (*.dat *.txt)"));
 }
 

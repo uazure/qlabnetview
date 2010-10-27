@@ -50,16 +50,32 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     enum dataSourceMode {modeNoop=0, modeNetwork=1, modeFile=2};
-    enum plotType {measurePlot=0,transitionPlot=1};
-    enum serviceInfo {serviceHeater,serviceHeLevel};
+    /*! Type of data source.
+      inNone - no data
+      inFile - data read from file
+      inUDP - data read over network (UDP packets, legacy version)
+      inTCP - data read over network (TCP stream, new version)
+      */
+    enum inType {inNone=0, inFile=1, inUDP=2, inTCP=3, inOther=99};
+
+    /*!
+      Name of input. Either filename or network server address
+      */
+    QString inName;
+
+    /*! It is set to true when we need to fetch all the data quickly over udp
+      */
     bool burstUpdate;
 
-
+    /*! This is main dynamic array of doubles
+      with interface of QTableModel
+      */
     GpibData *pdata;
 
-    QString currentFileName;
+    /*! This is the main plot widget
+      */
     Plot *plot;
-    static QString getFileName(void);
+    QString getFileName(void) const;
     QString delimiter;
     QRegExp delimiterRegExp;
     qint32 timediff(QTime from, QTime to);
@@ -76,8 +92,6 @@ public:
 
 
     //Ui::MainWindow *ui;
-
-
 
 public slots:
     void showErrorMessageDialog(QString message);

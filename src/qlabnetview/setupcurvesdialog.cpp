@@ -317,3 +317,7 @@ bool setupCurvesDialog::plotAxisEnabled(int axis) const {
 void setupCurvesDialog::currentColumnIndexChanged(int index) {
 
 }
+
+void setupCurvesDialog::setTitle(QString title) {
+    this->setWindowTitle(title);
+}

@@ -61,6 +61,7 @@ public slots:
     void currentWidthChanged (double width);
     void currentYAxisChanged (void);
     void currentLinkChanged (bool link);
+    void setTitle(QString title);
 
 };
 
